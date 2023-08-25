@@ -8,7 +8,9 @@ This Golang project offers a set of API endpoints designed to streamline common 
 
 2. Clone this repository
 
-3. Run the app `go run main.go`
+3. Create a `.env` file by running `cp .env.example .env` with your environment variables
+
+4. Run the app `go run main.go`
 
 ## API Endpoints
 
