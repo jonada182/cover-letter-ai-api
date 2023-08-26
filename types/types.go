@@ -18,14 +18,36 @@ type ChatGPTRequest struct {
 }
 
 type ChatGPTResponseChoice struct {
-	Index   int `json:"index"`
-	Message struct {
-		Role    string `json:"role"`
-		Content string `json:"content"`
-	} `json:"message"`
-	FinishReason string `json:"finish_reason"`
+	Index        int            `json:"index"`
+	Message      ChatGPTMessage `json:"message"`
+	FinishReason string         `json:"finish_reason"`
+}
+
+type ChatGPTMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
 
 type ChatGPTResponseData struct {
 	Choices []ChatGPTResponseChoice `json:"choices"`
+}
+
+type CareerProfile struct {
+	ID              int32             `bson:"id"`
+	Headline        string            `bson:"headline"`
+	ExperienceYears int               `bson:"experience_years"`
+	Summary         string            `bson:"summary"`
+	Skills          []CareerSkills    `bson:"skills"`
+	ContactInfo     CareerContactInfo `bson:"contact_info"`
+}
+
+type CareerSkills struct {
+	Skill string `bson:"skill"`
+}
+
+type CareerContactInfo struct {
+	Email   string `bson:"email"`
+	Address string `bson:"address"`
+	Phone   string `bson:"phone"`
+	Website string `bson:"website"`
 }

@@ -1,4 +1,4 @@
-package handlers
+package clients
 
 import (
 	"bytes"
@@ -13,23 +13,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type OpenAI struct {
+type OpenAIClient struct {
 	apiKey string
 	model  string
 }
 
-func NewOpenAI() (openAI *OpenAI, err error) {
+func NewOpenAIClient() (*OpenAIClient, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
 		return nil, errors.New("no OpenAI API key present in env file")
 	}
-	return &OpenAI{
+	return &OpenAIClient{
 		apiKey: apiKey,
 		model:  "gpt-3.5-turbo",
 	}, nil
 }
 
-func (oa *OpenAI) HandleChatGPT(c *gin.Context, prompt string) {
+func (oa *OpenAIClient) HandleChatGPT(c *gin.Context, prompt string) {
 	apiKey := oa.apiKey
 	apiUrl := "https://api.openai.com/v1/chat/completions"
 	requestBody := &types.ChatGPTRequest{
@@ -49,11 +49,13 @@ func (oa *OpenAI) HandleChatGPT(c *gin.Context, prompt string) {
 			},
 		},
 	}
+
 	requestBodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiUrl, bytes.NewReader(requestBodyBytes))
 	if err != nil {
@@ -77,7 +79,6 @@ func (oa *OpenAI) HandleChatGPT(c *gin.Context, prompt string) {
 
 	defer resp.Body.Close()
 
-	// Read the response body
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
@@ -91,5 +92,4 @@ func (oa *OpenAI) HandleChatGPT(c *gin.Context, prompt string) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": responseData.Choices[0].Message.Content})
-
 }

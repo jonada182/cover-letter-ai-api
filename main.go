@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"resu-mate-api/handlers"
+	"resu-mate-api/clients"
 	"resu-mate-api/utils"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +10,8 @@ import (
 
 func setupRouter() *gin.Engine {
 	router := gin.Default()
-	router.POST("/cover-letter", handlers.GenerateCoverLetter)
+	httpClient := clients.NewHttpClient()
+	router.POST("/cover-letter", httpClient.GenerateCoverLetter)
 	return router
 }
 

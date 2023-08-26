@@ -1,4 +1,4 @@
-package handlers
+package clients
 
 import (
 	"fmt"
@@ -8,7 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GenerateCoverLetter(c *gin.Context) {
+type HttpClient struct{}
+
+func NewHttpClient() (httpClient *HttpClient) {
+	return &HttpClient{}
+}
+
+func (client *HttpClient) GenerateCoverLetter(c *gin.Context) {
 	var jobPosting types.JobPosting
 	if err := c.ShouldBindJSON(&jobPosting); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -23,10 +29,10 @@ func GenerateCoverLetter(c *gin.Context) {
 	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
 	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
 
-	openAI, err := NewOpenAI()
+	openAIClient, err := NewOpenAIClient()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	openAI.HandleChatGPT(c, prompt)
+	openAIClient.HandleChatGPT(c, prompt)
 }
