@@ -1,6 +1,8 @@
-# Resu-mate API
+# CoverLetterAI - API
 
-This Golang project offers a set of API endpoints designed to streamline common job application tasks. For instance, it enables you to effortlessly create cover letters and perform other related actions.
+## What is CoverLetterAI
+
+Introducing **CoverLetterAI**, your new best friend in the job application process. Utilizing the advanced capabilities of ChatGPT, our web app crafts compelling and personalized cover letters in minutes. Simply answer a few questions or give us some key points, and we'll turn them into a professional cover letter that stands out. Say goodbye to staring at a blank screen wondering how to start; let **CoverLetterAI** do the heavy lifting so you can focus on landing your dream job.
 
 ## Installation
 
