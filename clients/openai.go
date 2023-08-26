@@ -2,13 +2,13 @@ package clients
 
 import (
 	"bytes"
+	"cover-letter-ai-api/types"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"resu-mate-api/types"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +29,7 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 	}, nil
 }
 
-func (oa *OpenAIClient) HandleChatGPT(c *gin.Context, prompt string) {
+func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, prompt string) {
 	apiKey := oa.apiKey
 	apiUrl := "https://api.openai.com/v1/chat/completions"
 	requestBody := &types.ChatGPTRequest{

@@ -1,5 +1,7 @@
 package types
 
+import "github.com/google/uuid"
+
 type JobPosting struct {
 	CompanyName string `json:"company_name" bind:"required"`
 	JobRole     string `json:"job_role"`
@@ -32,17 +34,25 @@ type ChatGPTResponseData struct {
 	Choices []ChatGPTResponseChoice `json:"choices"`
 }
 
-type CareerProfile struct {
-	ID              int32             `bson:"id"`
-	Headline        string            `bson:"headline"`
-	ExperienceYears int               `bson:"experience_years"`
-	Summary         string            `bson:"summary"`
-	Skills          []CareerSkills    `bson:"skills"`
-	ContactInfo     CareerContactInfo `bson:"contact_info"`
+type CareerProfileRequest struct {
+	FirstName       string             `json:"first_name"`
+	LastName        string             `json:"last_name"`
+	Headline        string             `json:"headline"`
+	ExperienceYears int                `json:"experience_years"`
+	Summary         *string            `json:"summary"`
+	Skills          *[]string          `json:"skills"`
+	ContactInfo     *CareerContactInfo `json:"contact_info"`
 }
 
-type CareerSkills struct {
-	Skill string `bson:"skill"`
+type CareerProfile struct {
+	ID              uuid.UUID          `bson:"id"`
+	FirstName       string             `bson:"first_name"`
+	LastName        string             `bson:"last_name"`
+	Headline        string             `bson:"headline"`
+	ExperienceYears int                `bson:"experience_years"`
+	Summary         *string            `bson:"summary"`
+	Skills          *[]string          `bson:"skills"`
+	ContactInfo     *CareerContactInfo `bson:"contact_info"`
 }
 
 type CareerContactInfo struct {

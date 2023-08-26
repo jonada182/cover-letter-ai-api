@@ -8,11 +8,9 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-  resu-mate-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: resu-mate-api
+  cover-letter-ai-api:
+    build: .
+    container_name: cover-letter-ai-api
     depends_on:
       - mongodb
     ports:
