@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,27 +30,42 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 	}, nil
 }
 
-func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, prompt string) {
+func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string) {
 	apiKey := oa.apiKey
 	apiUrl := "https://api.openai.com/v1/chat/completions"
-	requestBody := &types.ChatGPTRequest{
-		Model: oa.model,
-		Messages: []types.ChatGTPRequestMessage{
-			{
-				Role:    "system",
-				Content: "You are professional career advisor.",
-			},
-			{
-				Role:    "user",
-				Content: "I need a cover letter for job. 3 paragraphs, 300 words. ONLY letter body. Details below:",
-			},
-			{
-				Role:    "user",
-				Content: prompt,
-			},
+	promptMessages := []types.ChatGTPRequestMessage{
+		{
+			Role:    "system",
+			Content: "You are professional career advisor.",
+		},
+		{
+			Role:    "user",
+			Content: "I need a cover letter for job. 3 paragraphs, 300 words. ONLY letter body. Details below:",
 		},
 	}
 
+	// Add career profile information to prompt
+	careerProfileInfo, err := generateCareerProfileInfoPrompt(email)
+	if err == nil && careerProfileInfo != "" {
+		promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
+			Role:    "user",
+			Content: careerProfileInfo,
+		})
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Add cover letter details to prompt
+	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
+		Role:    "user",
+		Content: prompt,
+	})
+
+	requestBody := &types.ChatGPTRequest{
+		Model:    oa.model,
+		Messages: promptMessages,
+	}
 	requestBodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -92,4 +108,35 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, prompt string
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": responseData.Choices[0].Message.Content})
+}
+
+func generateCareerProfileInfoPrompt(email string) (string, error) {
+	info := ""
+
+	s, err := NewStore()
+	if err != nil {
+		return "", err
+	}
+
+	careerProfile, err := s.GetCareerProfile(email)
+	if err != nil {
+		return "", err
+	}
+
+	var builder strings.Builder
+	builder.WriteString("Here is my career information:")
+	if careerProfile.Headline != "" {
+		builder.WriteString(fmt.Sprintf("\nHeadline:%s,", careerProfile.Headline))
+	}
+	if careerProfile.ExperienceYears > 0 {
+		builder.WriteString(fmt.Sprintf("\nExperience:%d years,", careerProfile.ExperienceYears))
+	}
+	if len(*careerProfile.Skills) > 0 {
+		builder.WriteString(fmt.Sprintf("\nSkills:%s,", strings.Join(*careerProfile.Skills, ",")))
+	}
+	if *careerProfile.Summary != "" {
+		builder.WriteString(fmt.Sprintf("\nSummary:%s,", *careerProfile.Summary))
+	}
+
+	return info, nil
 }

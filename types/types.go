@@ -2,6 +2,11 @@ package types
 
 import "github.com/google/uuid"
 
+type CoverLetterRequest struct {
+	Email      string     `json:"email"`
+	JobPosting JobPosting `json:"job_posting"`
+}
+
 type JobPosting struct {
 	CompanyName string `json:"company_name" bind:"required"`
 	JobRole     string `json:"job_role"`

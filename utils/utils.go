@@ -24,7 +24,9 @@ func LoadEnvFile(filename string) error {
 		}
 		key := strings.TrimSpace(parts[0])
 		value := strings.TrimSpace(parts[1])
-		os.Setenv(key, value)
+		if os.Getenv(key) == "" {
+			os.Setenv(key, value)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

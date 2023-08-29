@@ -19,12 +19,18 @@ func (client *HttpClient) HandleIndex(c *gin.Context) {
 }
 
 func (client *HttpClient) HandleCoverLetter(c *gin.Context) {
-	var jobPosting types.JobPosting
-	if err := c.ShouldBindJSON(&jobPosting); err != nil {
+	var coverLetterRequest types.CoverLetterRequest
+	if err := c.ShouldBindJSON(&coverLetterRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	if coverLetterRequest.Email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "email is required"})
+		return
+	}
+
+	jobPosting := coverLetterRequest.JobPosting
 	if jobPosting.CompanyName == "" || jobPosting.JobRole == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "company name and job role are required"})
 		return
@@ -38,7 +44,7 @@ func (client *HttpClient) HandleCoverLetter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	openAIClient.GenerateChatGPTCoverLetter(c, prompt)
+	openAIClient.GenerateChatGPTCoverLetter(c, coverLetterRequest.Email, prompt)
 }
 
 func (client *HttpClient) HandleCreateCareerProfile(c *gin.Context) {
