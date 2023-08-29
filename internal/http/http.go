@@ -1,6 +1,8 @@
-package clients
+package http
 
 import (
+	"cover-letter-ai-api/internal/openai"
+	"cover-letter-ai-api/internal/store"
 	"cover-letter-ai-api/types"
 	"fmt"
 	"net/http"
@@ -39,7 +41,7 @@ func (client *HttpClient) HandleCoverLetter(c *gin.Context) {
 	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
 	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
 
-	openAIClient, err := NewOpenAIClient()
+	openAIClient, err := openai.NewOpenAIClient()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -59,19 +61,19 @@ func (client *HttpClient) HandleCreateCareerProfile(c *gin.Context) {
 		return
 	}
 
-	s, err := NewStore()
+	s, err := store.NewStore()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	_, err = s.StoreCareerProfile(&careerProfileRequest)
+	careerProfile, responseMsq, err := s.StoreCareerProfile(&careerProfileRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "career profile has been created"})
+	c.JSON(http.StatusCreated, gin.H{"message": responseMsq, "data": careerProfile})
 }
 
 func (client *HttpClient) HandleGetCareerProfile(c *gin.Context) {
@@ -81,7 +83,7 @@ func (client *HttpClient) HandleGetCareerProfile(c *gin.Context) {
 		return
 	}
 
-	s, err := NewStore()
+	s, err := store.NewStore()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

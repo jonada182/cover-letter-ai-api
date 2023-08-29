@@ -1,4 +1,4 @@
-package clients
+package store
 
 import (
 	"context"
@@ -57,10 +57,10 @@ func (store *Store) Disconnect(ctx context.Context, client *mongo.Client) {
 	fmt.Println("Disconnected from MongoDB")
 }
 
-func (store *Store) StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, error) {
+func (store *Store) StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	defer store.Disconnect(ctx, mongoClient)
 
@@ -85,17 +85,20 @@ func (store *Store) StoreCareerProfile(careerProfileRequest *types.CareerProfile
 	)
 	if err != nil {
 		log.Printf("Failed to update profile:%s", err.Error())
-		return nil, err
+		return nil, "", err
 	}
 
 	// Check if upsert resulted in an insert (new document)
+	var responseMsg string
 	if result.UpsertedCount > 0 {
-		fmt.Println("Career profile has been inserted:", result.UpsertedID)
+		responseMsg = "career profile has been inserted"
+		fmt.Printf("%s:", result.UpsertedID)
 	} else {
-		fmt.Println("Career profile has been updated:", result.ModifiedCount)
+		responseMsg = "career profile has been updated"
+		fmt.Printf("%s:", result.ModifiedCount)
 	}
 
-	return careerProfileRow, nil
+	return careerProfileRow, responseMsg, nil
 }
 
 func (store *Store) GetCareerProfile(email string) (*types.CareerProfile, error) {

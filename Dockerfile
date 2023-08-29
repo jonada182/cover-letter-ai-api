@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Build the Golang application
-RUN go build -o main .
+RUN go build -o api ./cmd/api
 
 # Specify the command to run the executable
-CMD ["./main"]
+CMD ["./api"]

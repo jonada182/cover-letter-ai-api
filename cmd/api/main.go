@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cover-letter-ai-api/clients"
-	"cover-letter-ai-api/utils"
+	"cover-letter-ai-api/internal/http"
+	"cover-letter-ai-api/util"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +10,7 @@ import (
 
 func setupRouter() *gin.Engine {
 	router := gin.Default()
-	httpClient := clients.NewHttpClient()
+	httpClient := http.NewHttpClient()
 	router.GET("/", httpClient.HandleIndex)
 	router.POST("/cover-letter", httpClient.HandleCoverLetter)
 	router.POST("/career-profile", httpClient.HandleCreateCareerProfile)
@@ -19,7 +19,7 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	err := utils.LoadEnvFile(".env")
+	err := util.LoadEnvFile(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file:", err)
 	}

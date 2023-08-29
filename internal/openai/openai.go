@@ -1,7 +1,8 @@
-package clients
+package openai
 
 import (
 	"bytes"
+	"cover-letter-ai-api/internal/store"
 	"cover-letter-ai-api/types"
 	"encoding/json"
 	"errors"
@@ -46,14 +47,15 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 
 	// Add career profile information to prompt
 	careerProfileInfo, err := generateCareerProfileInfoPrompt(email)
-	if err == nil && careerProfileInfo != "" {
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if careerProfileInfo != "" {
 		promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
 			Role:    "user",
 			Content: careerProfileInfo,
 		})
-	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
 	}
 
 	// Add cover letter details to prompt
@@ -113,7 +115,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 func generateCareerProfileInfoPrompt(email string) (string, error) {
 	info := ""
 
-	s, err := NewStore()
+	s, err := store.NewStore()
 	if err != nil {
 		return "", err
 	}
@@ -131,12 +133,13 @@ func generateCareerProfileInfoPrompt(email string) (string, error) {
 	if careerProfile.ExperienceYears > 0 {
 		builder.WriteString(fmt.Sprintf("\nExperience:%d years,", careerProfile.ExperienceYears))
 	}
-	if len(*careerProfile.Skills) > 0 {
+	if careerProfile.Skills != nil && len(*careerProfile.Skills) > 0 {
 		builder.WriteString(fmt.Sprintf("\nSkills:%s,", strings.Join(*careerProfile.Skills, ",")))
 	}
-	if *careerProfile.Summary != "" {
+	if careerProfile.Summary != nil && *careerProfile.Summary != "" {
 		builder.WriteString(fmt.Sprintf("\nSummary:%s,", *careerProfile.Summary))
 	}
+	info = builder.String()
 
 	return info, nil
 }

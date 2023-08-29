@@ -40,27 +40,27 @@ type ChatGPTResponseData struct {
 }
 
 type CareerProfileRequest struct {
-	FirstName       string             `json:"first_name"`
-	LastName        string             `json:"last_name"`
-	Headline        string             `json:"headline"`
-	ExperienceYears int                `json:"experience_years"`
-	Summary         *string            `json:"summary"`
-	Skills          *[]string          `json:"skills"`
-	ContactInfo     *CareerContactInfo `json:"contact_info"`
+	FirstName       string       `json:"first_name"`
+	LastName        string       `json:"last_name"`
+	Headline        string       `json:"headline"`
+	ExperienceYears int          `json:"experience_years"`
+	Summary         *string      `json:"summary"`
+	Skills          *[]string    `json:"skills"`
+	ContactInfo     *ContactInfo `json:"contact_info"`
 }
 
 type CareerProfile struct {
-	ID              uuid.UUID          `bson:"id"`
-	FirstName       string             `bson:"first_name"`
-	LastName        string             `bson:"last_name"`
-	Headline        string             `bson:"headline"`
-	ExperienceYears int                `bson:"experience_years"`
-	Summary         *string            `bson:"summary"`
-	Skills          *[]string          `bson:"skills"`
-	ContactInfo     *CareerContactInfo `bson:"contact_info"`
+	ID              uuid.UUID    `bson:"id"`
+	FirstName       string       `bson:"first_name"`
+	LastName        string       `bson:"last_name"`
+	Headline        string       `bson:"headline"`
+	ExperienceYears int          `bson:"experience_years"`
+	Summary         *string      `bson:"summary"`
+	Skills          *[]string    `bson:"skills"`
+	ContactInfo     *ContactInfo `bson:"contact_info"`
 }
 
-type CareerContactInfo struct {
+type ContactInfo struct {
 	Email   string `bson:"email"`
 	Address string `bson:"address"`
 	Phone   string `bson:"phone"`
