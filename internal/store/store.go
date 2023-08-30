@@ -1,12 +1,15 @@
 package store
 
+//go:generate mockgen -destination=../../mocks/mock_store.go -package=mocks github.com/jonada182/cover-letter-ai-api/internal/store Store
+
 import (
 	"context"
-	"cover-letter-ai-api/types"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/jonada182/cover-letter-ai-api/types"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,24 +17,31 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Store struct {
+type StoreClient struct {
 	mongoURI string
 	dbName   string
 }
 
-func NewStore() (*Store, error) {
+type Store interface {
+	Connect() (*mongo.Client, context.Context, error)
+	Disconnect(ctx context.Context, client *mongo.Client)
+	GetCareerProfile(email string) (*types.CareerProfile, error)
+	StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error)
+}
+
+func NewStore() (*StoreClient, error) {
 	mongoURI := os.Getenv("MONGODB_URI")
 	if mongoURI == "" {
 		return nil, errors.New("no Mongo URI defined in env file")
 	}
 
-	return &Store{
+	return &StoreClient{
 		mongoURI: mongoURI,
 		dbName:   "cover-letter-ai",
 	}, nil
 }
 
-func (store *Store) Connect() (*mongo.Client, context.Context, error) {
+func (store *StoreClient) Connect() (*mongo.Client, context.Context, error) {
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(store.mongoURI))
 	if err != nil {
@@ -49,7 +59,7 @@ func (store *Store) Connect() (*mongo.Client, context.Context, error) {
 	return client, ctx, nil
 }
 
-func (store *Store) Disconnect(ctx context.Context, client *mongo.Client) {
+func (store *StoreClient) Disconnect(ctx context.Context, client *mongo.Client) {
 	if err := client.Disconnect(ctx); err != nil {
 		log.Printf("Failed to disconnect the database: %s", err.Error())
 		return
@@ -57,7 +67,7 @@ func (store *Store) Disconnect(ctx context.Context, client *mongo.Client) {
 	fmt.Println("Disconnected from MongoDB")
 }
 
-func (store *Store) StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
+func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
 		return nil, "", err
@@ -95,13 +105,13 @@ func (store *Store) StoreCareerProfile(careerProfileRequest *types.CareerProfile
 		fmt.Printf("%s:", result.UpsertedID)
 	} else {
 		responseMsg = "career profile has been updated"
-		fmt.Printf("%s:", result.ModifiedCount)
+		fmt.Printf("%d:", result.ModifiedCount)
 	}
 
 	return careerProfileRow, responseMsg, nil
 }
 
-func (store *Store) GetCareerProfile(email string) (*types.CareerProfile, error) {
+func (store *StoreClient) GetCareerProfile(email string) (*types.CareerProfile, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
 		return nil, err

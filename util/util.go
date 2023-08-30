@@ -1,11 +1,16 @@
 package util
 
+//go:generate mockgen -destination=../mocks/mock_util.go -package=mocks github.com/jonada182/cover-letter-ai-api/util Util
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"os"
 	"strings"
 )
+
+type Util interface {
+	LoadEnvFile(string) error
+}
 
 func LoadEnvFile(filename string) error {
 	file, err := os.Open(filename)
@@ -18,9 +23,8 @@ func LoadEnvFile(filename string) error {
 	for scanner.Scan() {
 		line := scanner.Text()
 		parts := strings.SplitN(line, "=", 2)
-		if len(parts) != 2 {
-			log.Printf("Invalid line in .env file: %s\n", line)
-			continue
+		if len(parts) < 2 {
+			return fmt.Errorf("invalid line in .env file: %s", line)
 		}
 		key := strings.TrimSpace(parts[0])
 		value := strings.TrimSpace(parts[1])

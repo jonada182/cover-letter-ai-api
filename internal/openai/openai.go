@@ -1,9 +1,9 @@
 package openai
 
+//go:generate mockgen -destination=../../mocks/mock_openai.go -package=mocks github.com/jonada182/cover-letter-ai-api/internal/openai OpenAI
+
 import (
 	"bytes"
-	"cover-letter-ai-api/internal/store"
-	"cover-letter-ai-api/types"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,12 +12,19 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jonada182/cover-letter-ai-api/types"
+
 	"github.com/gin-gonic/gin"
 )
 
 type OpenAIClient struct {
 	apiKey string
 	model  string
+}
+
+type OpenAI interface {
+	GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s types.StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error)
 }
 
 func NewOpenAIClient() (*OpenAIClient, error) {
@@ -31,7 +38,7 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 	}, nil
 }
 
-func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string) {
+func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s types.StoreClient) (string, int, error) {
 	apiKey := oa.apiKey
 	apiUrl := "https://api.openai.com/v1/chat/completions"
 	promptMessages := []types.ChatGTPRequestMessage{
@@ -46,10 +53,9 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	}
 
 	// Add career profile information to prompt
-	careerProfileInfo, err := generateCareerProfileInfoPrompt(email)
+	careerProfileInfo, err := oa.GetCareerProfileInfoPrompt(email, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return "", http.StatusInternalServerError, err
 	}
 	if careerProfileInfo != "" {
 		promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
@@ -70,15 +76,13 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	}
 	requestBodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return "", http.StatusInternalServerError, err
 	}
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiUrl, bytes.NewReader(requestBodyBytes))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return "", http.StatusInternalServerError, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+apiKey)
@@ -86,39 +90,30 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	// Send the request and handle the response
 	resp, err := client.Do(req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return "", http.StatusInternalServerError, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": resp.Status})
-		return
+		return "", http.StatusInternalServerError, err
 	}
 
 	defer resp.Body.Close()
 
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return
+		return "", http.StatusInternalServerError, err
 	}
 
 	var responseData types.ChatGPTResponseData
 	if err := json.Unmarshal(responseBody, &responseData); err != nil {
-		fmt.Println("Error unmarshaling JSON:", err)
-		return
+		return "", http.StatusInternalServerError, err
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": responseData.Choices[0].Message.Content})
+	return responseData.Choices[0].Message.Content, http.StatusOK, nil
 }
 
-func generateCareerProfileInfoPrompt(email string) (string, error) {
+func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error) {
 	info := ""
-
-	s, err := store.NewStore()
-	if err != nil {
-		return "", err
-	}
 
 	careerProfile, err := s.GetCareerProfile(email)
 	if err != nil {

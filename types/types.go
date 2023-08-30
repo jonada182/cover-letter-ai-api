@@ -1,6 +1,12 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"context"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type CoverLetterRequest struct {
 	Email      string     `json:"email"`
@@ -65,4 +71,16 @@ type ContactInfo struct {
 	Address string `bson:"address"`
 	Phone   string `bson:"phone"`
 	Website string `bson:"website"`
+}
+
+type StoreClient interface {
+	Connect() (*mongo.Client, context.Context, error)
+	Disconnect(ctx context.Context, client *mongo.Client)
+	StoreCareerProfile(careerProfileRequest *CareerProfileRequest) (*CareerProfile, string, error)
+	GetCareerProfile(email string) (*CareerProfile, error)
+}
+
+type OpenAIClient interface {
+	GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(email string, s StoreClient) (string, error)
 }

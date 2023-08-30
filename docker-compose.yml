@@ -8,6 +8,12 @@ services:
     volumes:
       - mongodb_data:/data/db
 
+  mongodb-test:
+    image: mongo:latest
+    container_name: mongodb-test
+    ports:
+      - "27018:27017"
+
   cover-letter-ai-api:
     build: .
     container_name: cover-letter-ai-api

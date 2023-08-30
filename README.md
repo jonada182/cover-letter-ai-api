@@ -14,6 +14,12 @@ Introducing **CoverLetterAI**, your new best friend in the job application proce
 
 4. Run the app `go run main.go`
 
+## Testing
+
+1. To generate/update mocks, run `go generate ./...`
+
+2. To run tests: `go test`
+
 ## API Endpoints
 
 `POST`: `/cover-letter`
