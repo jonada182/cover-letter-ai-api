@@ -56,21 +56,28 @@ type CareerProfileRequest struct {
 }
 
 type CareerProfile struct {
-	ID              uuid.UUID    `bson:"id"`
-	FirstName       string       `bson:"first_name"`
-	LastName        string       `bson:"last_name"`
-	Headline        string       `bson:"headline"`
-	ExperienceYears int          `bson:"experience_years"`
-	Summary         *string      `bson:"summary"`
-	Skills          *[]string    `bson:"skills"`
-	ContactInfo     *ContactInfo `bson:"contact_info"`
+	ID              uuid.UUID    `bson:"id" json:"id"`
+	FirstName       string       `bson:"first_name" json:"first_name"`
+	LastName        string       `bson:"last_name" json:"last_name"`
+	Headline        string       `bson:"headline" json:"headline"`
+	ExperienceYears int          `bson:"experience_years" json:"experience_years"`
+	Summary         *string      `bson:"summary" json:"summary"`
+	Skills          *[]string    `bson:"skills" json:"skills"`
+	ContactInfo     *ContactInfo `bson:"contact_info" json:"contact_info"`
 }
 
 type ContactInfo struct {
-	Email   string `bson:"email"`
-	Address string `bson:"address"`
-	Phone   string `bson:"phone"`
-	Website string `bson:"website"`
+	Email   string `bson:"email" json:"email"`
+	Address string `bson:"address" json:"address"`
+	Phone   string `bson:"phone" json:"phone"`
+	Website string `bson:"website" json:"website"`
+}
+
+type Handler interface {
+	HandleIndex(c *gin.Context)
+	HandleCoverLetter(c *gin.Context)
+	HandleCreateCareerProfile(c *gin.Context)
+	HandleGetCareerProfile(c *gin.Context)
 }
 
 type StoreClient interface {

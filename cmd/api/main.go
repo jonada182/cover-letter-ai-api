@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/jonada182/cover-letter-ai-api/internal/handler"
-	"github.com/jonada182/cover-letter-ai-api/internal/http"
 	"github.com/jonada182/cover-letter-ai-api/internal/openai"
 	"github.com/jonada182/cover-letter-ai-api/internal/store"
 	"github.com/jonada182/cover-letter-ai-api/util"
@@ -21,18 +20,13 @@ func main() {
 		log.Fatal("Error initializing store:", err)
 	}
 
-	httpClient, err := http.NewHttpClient()
-	if err != nil {
-		log.Fatal("Error initializing http client:", err)
-	}
-
 	openAIClient, err := openai.NewOpenAIClient()
 	if err != nil {
 		log.Fatal("Error initializing OpenAI client:", err)
 	}
 
-	h := handler.NewHandler(storeClient, httpClient, openAIClient)
+	h := handler.NewHandler(storeClient, openAIClient)
 
-	r := http.SetupRouter(h.HttpClient, h.StoreClient, h.OpenAIClient)
+	r := h.SetupRouter()
 	r.Run(":8080")
 }

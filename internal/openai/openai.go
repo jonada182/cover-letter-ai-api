@@ -46,10 +46,6 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 			Role:    "system",
 			Content: "You are professional career advisor.",
 		},
-		{
-			Role:    "user",
-			Content: "I need a cover letter for job. 3 paragraphs, 300 words. ONLY letter body. Details below:",
-		},
 	}
 
 	// Add career profile information to prompt
@@ -67,7 +63,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	// Add cover letter details to prompt
 	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
 		Role:    "user",
-		Content: prompt,
+		Content: fmt.Sprintf("I need the message body of a cover letter for job. 3 paragraphs, 300 words. ONLY letter body. Details below:%s", prompt),
 	})
 
 	requestBody := &types.ChatGPTRequest{
@@ -121,7 +117,7 @@ func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreCl
 	}
 
 	var builder strings.Builder
-	builder.WriteString("Here is my career information:")
+	builder.WriteString("Here is my career profile information:")
 	if careerProfile.Headline != "" {
 		builder.WriteString(fmt.Sprintf("\nHeadline:%s,", careerProfile.Headline))
 	}
