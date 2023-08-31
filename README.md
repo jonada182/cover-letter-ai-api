@@ -28,3 +28,7 @@ Introducing **CoverLetterAI**, your new best friend in the job application proce
 
 1. Make you are running the `mongodb-test` container (`docker compose up -d mongodb-test`)
 2. Run `go test ./...` to run all the existing tests
+
+## API Documentation
+
+Check out the [API documentation](https://github.com/jonada182/cover-letter-ai-api/blob/main/docs/api.md#api-documentation)
