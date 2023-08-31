@@ -12,6 +12,7 @@ type Util interface {
 	LoadEnvFile(string) error
 }
 
+// LoadEnvFile sets all the valid environment variables from the given filename
 func LoadEnvFile(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {

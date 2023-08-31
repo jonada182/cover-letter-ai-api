@@ -29,6 +29,7 @@ type Store interface {
 	StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error)
 }
 
+// NewStore returns a store client, which has methods to interact with MongoDB
 func NewStore() (*StoreClient, error) {
 	mongoURI := os.Getenv("MONGODB_URI")
 	if mongoURI == "" {
@@ -41,6 +42,7 @@ func NewStore() (*StoreClient, error) {
 	}, nil
 }
 
+// Connect establishes a Mongo connection, and returns a MongoDB client
 func (store *StoreClient) Connect() (*mongo.Client, context.Context, error) {
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(store.mongoURI))
@@ -59,6 +61,7 @@ func (store *StoreClient) Connect() (*mongo.Client, context.Context, error) {
 	return client, ctx, nil
 }
 
+// Disconnect closes the MongoDB connection for the given client
 func (store *StoreClient) Disconnect(ctx context.Context, client *mongo.Client) {
 	if err := client.Disconnect(ctx); err != nil {
 		log.Printf("Failed to disconnect the database: %s", err.Error())
@@ -67,6 +70,7 @@ func (store *StoreClient) Disconnect(ctx context.Context, client *mongo.Client) 
 	fmt.Println("Disconnected from MongoDB")
 }
 
+// StoreCareerProfile upserts a CareerProfile in MongoDB
 func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
@@ -111,6 +115,7 @@ func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerP
 	return careerProfileRow, responseMsg, nil
 }
 
+// GetCareerProfile retrieves a CareerProfile from MongoDB
 func (store *StoreClient) GetCareerProfile(email string) (*types.CareerProfile, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {

@@ -22,6 +22,7 @@ type Handler struct {
 	OpenAIClient types.OpenAIClient
 }
 
+// NewHandler Initializes application handler allowing the injection of clients
 func NewHandler(s types.StoreClient, o types.OpenAIClient) *Handler {
 	return &Handler{
 		StoreClient:  s,
@@ -29,6 +30,7 @@ func NewHandler(s types.StoreClient, o types.OpenAIClient) *Handler {
 	}
 }
 
+// SetupRouter sets all the API endpoints and returns a gin router
 func (h *Handler) SetupRouter() *gin.Engine {
 	router := gin.Default()
 	router.GET("/", h.HandleIndex)
@@ -42,6 +44,7 @@ func (h *Handler) HandleIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Welcome to the CoverLetterAI API"})
 }
 
+// HandleCoverLetter handles a POST method that returns a cover letter from OpenAI
 func (h *Handler) HandleCoverLetter(c *gin.Context) {
 	var coverLetterRequest types.CoverLetterRequest
 	if err := c.ShouldBindJSON(&coverLetterRequest); err != nil {
@@ -72,6 +75,7 @@ func (h *Handler) HandleCoverLetter(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": coverLetter})
 }
 
+// HandleCreateCareerProfile handles a POST method to create a career profile in MongoDB
 func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
 	var careerProfileRequest types.CareerProfileRequest
 	if err := c.ShouldBindJSON(&careerProfileRequest); err != nil {
@@ -93,6 +97,7 @@ func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": responseMsq, "data": careerProfile})
 }
 
+// HandleCreateCareerProfile handles a GET method to retrieve a career profile from MongoDB
 func (h *Handler) HandleGetCareerProfile(c *gin.Context) {
 	email := c.Param("email")
 	if email == "" {

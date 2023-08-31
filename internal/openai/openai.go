@@ -17,6 +17,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var OpenAICompletionsUrl = "https://api.openai.com/v1/chat/completions"
+
 type OpenAIClient struct {
 	apiKey string
 	model  string
@@ -27,6 +29,7 @@ type OpenAI interface {
 	GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error)
 }
 
+// NewOpenAIClient initializes an OpenAI client with the API key from the .env file.
 func NewOpenAIClient() (*OpenAIClient, error) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
@@ -38,9 +41,8 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 	}, nil
 }
 
+// GenerateChatGPTCoverLetter uses the OpenAI completions API to generate a cover letter using the given parameters
 func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s types.StoreClient) (string, int, error) {
-	apiKey := oa.apiKey
-	apiUrl := "https://api.openai.com/v1/chat/completions"
 	promptMessages := []types.ChatGTPRequestMessage{
 		{
 			Role:    "system",
@@ -76,12 +78,12 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	}
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", apiUrl, bytes.NewReader(requestBodyBytes))
+	req, err := http.NewRequest("POST", OpenAICompletionsUrl, bytes.NewReader(requestBodyBytes))
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Authorization", "Bearer "+oa.apiKey)
 
 	// Send the request and handle the response
 	resp, err := client.Do(req)
@@ -108,6 +110,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	return responseData.Choices[0].Message.Content, http.StatusOK, nil
 }
 
+// GetCareerProfileInfoPrompt returns a prompt string with the CareerProfile data retrieved using the given email
 func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error) {
 	info := ""
 
