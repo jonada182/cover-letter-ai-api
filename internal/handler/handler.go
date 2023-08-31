@@ -5,6 +5,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jonada182/cover-letter-ai-api/types"
@@ -50,7 +51,7 @@ func (h *Handler) HandleCoverLetter(c *gin.Context) {
 	// Receive CoverLetterRequest parameters from request payload
 	var coverLetterRequest types.CoverLetterRequest
 	if err := c.ShouldBindJSON(&coverLetterRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("error retrieving JSON: %s", err.Error())})
 		return
 	}
 
@@ -84,7 +85,7 @@ func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
 	// Receive CareerProfileRequest parameters from request payload
 	var careerProfileRequest types.CareerProfileRequest
 	if err := c.ShouldBindJSON(&careerProfileRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("error retrieving JSON: %s", err.Error())})
 		return
 	}
 
@@ -113,6 +114,10 @@ func (h *Handler) HandleGetCareerProfile(c *gin.Context) {
 
 	// Call store method to retrieve CareerProfile from MongoDB
 	careerProfile, err := h.StoreClient.GetCareerProfile(email)
+	if err != nil && strings.Contains(err.Error(), "no document") {
+		c.JSON(http.StatusNotFound, gin.H{"error": "career profile not found"})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -1,0 +1,415 @@
+{
+	"info": {
+		"_postman_id": "a94bd608-2d9a-4c5e-8976-355f8b027f47",
+		"name": "CoverLetterAI API",
+		"description": "## What is CoverLetterAI\n\nIntroducing **CoverLetterAI**, your new best  \nfriend in the job application process. Utilizing the advanced  \ncapabilities of ChatGPT, our web app crafts compelling and personalized  \ncover letters in minutes. Simply answer a few questions or give us some  \nkey points, and we'll turn them into a professional cover letter that  \nstands out. Say goodbye to staring at a blank screen wondering how to  \nstart; let **CoverLetterAI** do the heavy lifting so you can focus on landing your dream job.\n\nRepository: [https://github.com/jonada182/cover-letter-ai-api](https://github.com/jonada182/cover-letter-ai-api)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4425953"
+	},
+	"item": [
+		{
+			"name": "Cover Letter",
+			"item": [
+				{
+					"name": "Generate Cover Letter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"your@email.com\",\n    \"job_posting\": {\n        \"company_name\": \"Acme Inc.\",\n        \"job_role\": \"CEO\",\n        \"job_details\": \"Looking for a very experienced CEO\",\n        \"skills\": \"sales, accounting, management\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cover-letter",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cover-letter"
+							]
+						},
+						"description": "Generate a cover letter using OpenAI"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"your@email.com\",\n    \"job_posting\": {\n        \"company_name\": \"Acme Inc.\",\n        \"job_role\": \"CEO\",\n        \"job_details\": \"Looking for a very experienced CEO\",\n        \"skills\": \"sales, accounting, management\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cover-letter",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cover-letter"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 04:38:37 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": \"[Your Name]\\n[Your Address]\\n[City, State, ZIP]\\n[Email Address]\\n[Phone Number]\\n[Date]\\n\\n[Employer's Name]\\n[Company Name]\\n[Company Address]\\n[City, State, ZIP]\\n\\nDear [Employer's Name],\\n\\nI am writing to express my keen interest in the CEO position at Acme Inc. As a highly experienced executive leader with over 10 years in various management roles, I strongly believe that my skills in sales, accounting, and management align perfectly with the requirements of this position.\\n\\nWith a proven track record of successfully driving growth and profitability in my previous roles, I have consistently demonstrated my ability to lead companies towards achieving their strategic goals. Throughout my career, I have held senior executive positions where I have been responsible for developing and implementing comprehensive sales strategies that resulted in substantial revenue growth. Furthermore, my expertise in accounting allowed me to effectively manage financial resources, optimize budgets, and make data-driven decisions that positively impacted the organization's bottom line.\\n\\nIn addition to my sales and accounting skills, I possess exceptional leadership and management capabilities. I have a strong ability to motivate and inspire teams, fostering a culture of productivity, innovation, and collaboration. By leveraging my strategic mindset and strong business acumen, I have been able to successfully navigate through challenges, identify opportunities for improvement, and implement effective solutions. I am confident that these qualities, coupled with my extensive experience, make me an ideal candidate for the CEO role at Acme Inc.\\n\\nI am attracted to Acme Inc. for its strong reputation in the industry and its commitment to excellence. I am excited about the opportunity to lead the company through its next phase of growth and contribute to its continued success. I believe that my expertise, combined with Acme Inc.'s exceptional team, products, and market position, can lead to significant achievements in the near future.\\n\\nI would welcome the opportunity to discuss how my skills and experience align with the needs of Acme Inc. Thank you for considering my application. I have attached my resume for your review, and I look forward to the possibility of discussing my candidacy further.\\n\\nSincerely,\\n\\n[Your Name]\"\n}"
+						},
+						{
+							"name": "Bad Request (no job fields)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"your@email.com\",\n    \"job_posting\": {\n        \"company_name\": \"Acme Inc.\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cover-letter",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cover-letter"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 04:39:46 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "50"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"company name and job role are required\"\n}"
+						},
+						{
+							"name": "Bad Request (no email)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"job_posting\": {\n        \"company_name\": \"Acme Inc.\",\n        \"job_role\": \"CEO\",\n        \"job_details\": \"Looking for a very experienced CEO\",\n        \"skills\": \"sales, accounting, management\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cover-letter",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cover-letter"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 04:40:31 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"email is required\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Generate cover letters from job postings, by providing all the required information."
+		},
+		{
+			"name": "Career Profile",
+			"item": [
+				{
+					"name": "Get Career Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/career-profile/:email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"career-profile",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": "your@email.com",
+									"description": "email address for career profile"
+								}
+							]
+						},
+						"description": "Get an existing career profile from the given email address (`:email`)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/career-profile/your@email.com",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"career-profile",
+										"your@email.com"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": \"bebf85d5-c00f-4d27-a9a8-2424f801ffcd\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Doe\",\n        \"headline\": \"CEO\",\n        \"experience_years\": 10,\n        \"summary\": \"I am the best CEO\",\n        \"skills\": [\n            \"management\",\n            \"accounting\",\n            \"sales\"\n        ],\n        \"contact_info\": {\n            \"email\": \"your@email.com\",\n            \"address\": \"Toronto, ON\",\n            \"phone\": \"+1 555-555-5555\",\n            \"website\": \"mywebsite.com\"\n        }\n    }\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/career-profile/unknown@email",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"career-profile",
+										"unknown@email"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"career profile not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Career Profile",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"headline\": \"CEO\",\n    \"experience_years\": 10,\n    \"skills\": [\n        \"management\",\n        \"accounting\",\n        \"sales\"\n    ],\n    \"summary\": \"I am the best CEO\",\n    \"contact_info\": {\n        \"email\": \"your@email.com\",\n        \"address\": \"Toronto, ON\",\n        \"phone\": \"+1 555-555-5555\",\n        \"website\": \"mywebsite.com\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/career-profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"career-profile"
+							]
+						},
+						"description": "Create a career profile with all your details"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"headline\": \"CEO\",\n    \"experience_years\": 10,\n    \"skills\": [\n        \"management\",\n        \"accounting\",\n        \"sales\"\n    ],\n    \"summary\": \"I am the best CEO\",\n    \"contact_info\": {\n        \"email\": \"your@email.com\",\n        \"address\": \"Toronto, ON\",\n        \"phone\": \"+1 555-555-5555\",\n        \"website\": \"mywebsite.com\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/career-profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"career-profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 04:33:46 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "368"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": \"b6d61060-6a1b-4d03-a9cc-075ffa078c16\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Doe\",\n        \"headline\": \"CEO\",\n        \"experience_years\": 10,\n        \"summary\": \"I am the best CEO\",\n        \"skills\": [\n            \"management\",\n            \"accounting\",\n            \"sales\"\n        ],\n        \"contact_info\": {\n            \"email\": \"your@email.com\",\n            \"address\": \"Toronto, ON\",\n            \"phone\": \"+1 555-555-5555\",\n            \"website\": \"mywebsite.com\"\n        }\n    },\n    \"message\": \"career profile has been created\"\n}"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/career-profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"career-profile"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 04:35:01 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "48"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"headline and experience are required\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Generate more accurate cover letters by creating a career profile"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
