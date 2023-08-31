@@ -17,9 +17,8 @@ import (
 
 func TestHandler(t *testing.T) {
 	t.Run("HandleIndex", func(t *testing.T) {
+		// Setup httptest and gin router
 		router, recorder := util.SetupTestRouter()
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
 		handler := &Handler{}
 		router.GET("/", handler.HandleIndex)
 
@@ -41,12 +40,17 @@ func TestHandler(t *testing.T) {
 	t.Run("HandleCoverLetter", func(t *testing.T) {
 		apiEndpoint := "/cover-letter"
 		t.Run("invalid request", func(t *testing.T) {
+			// Setup httptest, gin router and environment variables
 			router, recorder := util.SetupTestRouter()
+			util.SetupTestEnvironment(t)
+
+			// Setup mocks and expectations
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			util.SetupTestEnvironment(t)
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
+
+			// Setup request handler
 			handler := NewHandler(mockStore, mockOpenAI)
 			router.POST(apiEndpoint, handler.HandleCoverLetter)
 			// Create a new HTTP request with no payload
@@ -63,10 +67,10 @@ func TestHandler(t *testing.T) {
 		})
 
 		t.Run("valid request", func(t *testing.T) {
+			// Setup httptest, gin router and environment variables
 			router, recorder := util.SetupTestRouter()
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
 			util.SetupTestEnvironment(t)
+
 			email := "test@email"
 			requestData := types.CoverLetterRequest{
 				Email: email,
@@ -82,6 +86,9 @@ func TestHandler(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Contains(t, message, "career profile")
 
+			// Setup mocks and expectations
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockOpenAI.EXPECT().
@@ -89,6 +96,7 @@ func TestHandler(t *testing.T) {
 				Return("perfect cover letter", 200, nil).
 				Times(1)
 
+			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
 			router.POST(apiEndpoint, handler.HandleCoverLetter)
 
@@ -113,12 +121,17 @@ func TestHandler(t *testing.T) {
 	t.Run("HandleCreateCareerProfile", func(t *testing.T) {
 		apiEndpoint := "/career-profile"
 		t.Run("invalid request", func(t *testing.T) {
+			// Setup httptest, gin router and environment variables
 			router, recorder := util.SetupTestRouter()
+			util.SetupTestEnvironment(t)
+
+			// Setup mocks and expectations
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			util.SetupTestEnvironment(t)
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
+
+			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
 			router.POST(apiEndpoint, handler.HandleCreateCareerProfile)
 			// Create a new HTTP request with no payload
@@ -135,10 +148,10 @@ func TestHandler(t *testing.T) {
 		})
 
 		t.Run("valid request", func(t *testing.T) {
+			// Setup httptest, gin router and environment variables
 			router, recorder := util.SetupTestRouter()
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
 			util.SetupTestEnvironment(t)
+
 			email := "test@email"
 			requestData := types.CareerProfileRequest{
 				FirstName:       "John",
@@ -162,6 +175,9 @@ func TestHandler(t *testing.T) {
 			expectedData, err := json.Marshal(expectedResult)
 			assert.NoError(t, err)
 
+			// Setup mocks and expectations
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockStore.
@@ -169,6 +185,8 @@ func TestHandler(t *testing.T) {
 				StoreCareerProfile(gomock.Eq(&requestData)).
 				Return(expectedResult, "success", nil).
 				Times(1)
+
+			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
 			router.POST(apiEndpoint, handler.HandleCreateCareerProfile)
 
@@ -191,10 +209,10 @@ func TestHandler(t *testing.T) {
 	})
 
 	t.Run("HandleGetCareerProfile", func(t *testing.T) {
+		// Setup httptest, gin router and environment variables
 		router, recorder := util.SetupTestRouter()
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
 		util.SetupTestEnvironment(t)
+
 		email := "test@email"
 		expectedResult := &types.CareerProfile{
 			ID:              uuid.New(),
@@ -209,6 +227,9 @@ func TestHandler(t *testing.T) {
 		expectedData, err := json.Marshal(expectedResult)
 		assert.NoError(t, err)
 
+		// Setup mocks and expectations
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 		mockStore := mocks.NewMockStore(ctrl)
 		mockOpenAI := mocks.NewMockOpenAI(ctrl)
 		mockStore.
@@ -216,6 +237,8 @@ func TestHandler(t *testing.T) {
 			GetCareerProfile(gomock.Eq(email)).
 			Return(expectedResult, nil).
 			Times(1)
+
+		// Setup mocks and expectations
 		handler := NewHandler(mockStore, mockOpenAI)
 		router.GET("/career-profile/:email", handler.HandleGetCareerProfile)
 

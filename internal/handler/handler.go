@@ -40,12 +40,14 @@ func (h *Handler) SetupRouter() *gin.Engine {
 	return router
 }
 
+// HandleIndex returns a welcome message when "/" is accessed
 func (h *Handler) HandleIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Welcome to the CoverLetterAI API"})
 }
 
 // HandleCoverLetter handles a POST method that returns a cover letter from OpenAI
 func (h *Handler) HandleCoverLetter(c *gin.Context) {
+	// Receive CoverLetterRequest parameters from request payload
 	var coverLetterRequest types.CoverLetterRequest
 	if err := c.ShouldBindJSON(&coverLetterRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -63,9 +65,11 @@ func (h *Handler) HandleCoverLetter(c *gin.Context) {
 		return
 	}
 
+	// Create cover letter prompt using the jobPosting data
 	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
 	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
 
+	// Call OpenAI to generate a cover letter with the given parameters
 	coverLetter, statusCode, err := h.OpenAIClient.GenerateChatGPTCoverLetter(c, coverLetterRequest.Email, prompt, h.StoreClient)
 	if err != nil {
 		c.JSON(statusCode, gin.H{"error": err.Error()})
@@ -77,6 +81,7 @@ func (h *Handler) HandleCoverLetter(c *gin.Context) {
 
 // HandleCreateCareerProfile handles a POST method to create a career profile in MongoDB
 func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
+	// Receive CareerProfileRequest parameters from request payload
 	var careerProfileRequest types.CareerProfileRequest
 	if err := c.ShouldBindJSON(&careerProfileRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -88,6 +93,7 @@ func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
 		return
 	}
 
+	// Call store method to upsert CareerProfile in MongoDB
 	careerProfile, responseMsq, err := h.StoreClient.StoreCareerProfile(&careerProfileRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -105,6 +111,7 @@ func (h *Handler) HandleGetCareerProfile(c *gin.Context) {
 		return
 	}
 
+	// Call store method to retrieve CareerProfile from MongoDB
 	careerProfile, err := h.StoreClient.GetCareerProfile(email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

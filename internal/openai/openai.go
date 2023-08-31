@@ -78,6 +78,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	}
 
 	client := &http.Client{}
+	// Make a request to the OpenAI completions API using the defined model and messages (prompts)
 	req, err := http.NewRequest("POST", OpenAICompletionsUrl, bytes.NewReader(requestBodyBytes))
 	if err != nil {
 		return "", http.StatusInternalServerError, err
@@ -107,6 +108,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 		return "", http.StatusInternalServerError, err
 	}
 
+	// Return the content for the last received message from OpenAI if the response was successful
 	return responseData.Choices[0].Message.Content, http.StatusOK, nil
 }
 
@@ -119,6 +121,7 @@ func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreCl
 		return "", err
 	}
 
+	// Concatenate each of the career profile fields into a single message
 	var builder strings.Builder
 	builder.WriteString("Here is my career profile information:")
 	if careerProfile.Headline != "" {

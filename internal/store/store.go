@@ -45,6 +45,7 @@ func NewStore() (*StoreClient, error) {
 // Connect establishes a Mongo connection, and returns a MongoDB client
 func (store *StoreClient) Connect() (*mongo.Client, context.Context, error) {
 	ctx := context.Background()
+	// Connect to the database with the given mongoURI
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(store.mongoURI))
 	if err != nil {
 		log.Printf("Failed to connect to the database: %s", err.Error())
@@ -78,6 +79,7 @@ func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerP
 	}
 	defer store.Disconnect(ctx, mongoClient)
 
+	// Get the profiles collection from the database client
 	collection := mongoClient.Database(store.dbName).Collection("profiles")
 	careerProfileRow := &types.CareerProfile{
 		ID:              uuid.New(),
@@ -89,6 +91,7 @@ func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerP
 		Skills:          careerProfileRequest.Skills,
 		ContactInfo:     careerProfileRequest.ContactInfo,
 	}
+	// Set up update options to ensure the values are overwritten in the database
 	update := bson.M{"$set": careerProfileRow}
 	updateOptions := options.Update().SetUpsert(true)
 	result, err := collection.UpdateOne(
@@ -124,7 +127,9 @@ func (store *StoreClient) GetCareerProfile(email string) (*types.CareerProfile, 
 	defer store.Disconnect(ctx, mongoClient)
 
 	var careerProfile types.CareerProfile
+	// Get the profiles collection from the database client
 	collection := mongoClient.Database(store.dbName).Collection("profiles")
+	// Find career profile using the contact_info.email and the given email address
 	err = collection.FindOne(ctx, bson.M{"contact_info.email": email}).Decode(&careerProfile)
 	if err != nil {
 		log.Printf("Failed to find profile:%s", err.Error())
