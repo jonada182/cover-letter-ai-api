@@ -1,0 +1,24 @@
+version: '3'
+
+tasks:
+  run:
+    desc: start application services
+    cmds:
+      - docker compose down mongodb api
+      - docker compose up -d --build --quiet-pull mongodb api
+  dev:
+    desc: run dev environment
+    cmds:
+      - docker compose down
+      - docker compose up -d --build --quiet-pull mongodb
+      - go run ./cmd/api
+  test:
+    desc: run application tests
+    cmds:
+      - docker compose up -d --quiet-pull mongodb-test > /dev/null 2>&1
+      - go test ./...
+      - docker compose down mongodb-test > /dev/null 2>&1
+  mock:
+    desc: generate mocks using gomock
+    cmds:
+      - go generate ./...

@@ -62,7 +62,7 @@ func TestHandler(t *testing.T) {
 			// Check the response status code
 			assert.Equal(t, http.StatusBadRequest, recorder.Code)
 			// Check the response body
-			expectedResponse := `{"error":"invalid request"}`
+			expectedResponse := `{"error":"error retrieving JSON: invalid request"}`
 			assert.Equal(t, expectedResponse, recorder.Body.String())
 		})
 
@@ -143,7 +143,7 @@ func TestHandler(t *testing.T) {
 			// Check the response status code
 			assert.Equal(t, http.StatusBadRequest, recorder.Code)
 			// Check the response body
-			expectedResponse := `{"error":"invalid request"}`
+			expectedResponse := `{"error":"error retrieving JSON: invalid request"}`
 			assert.Equal(t, expectedResponse, recorder.Body.String())
 		})
 

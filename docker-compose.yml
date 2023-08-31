@@ -14,7 +14,7 @@ services:
     ports:
       - "27018:27017"
 
-  cover-letter-ai-api:
+  api:
     build: .
     container_name: cover-letter-ai-api
     depends_on:

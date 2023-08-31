@@ -12,22 +12,24 @@ Introducing **CoverLetterAI**, your new best friend in the job application proce
 
 3. Create a `.env` file by running `cp .env.example .env` with your environment variables
 
-4. Start the docker containers (`docker compose up -d`)
+4. Start the application services (`task run`)
 
 5. The API routes will be available on `http://localhost:8080`
 
-## Development
-
-1. When making code changes, you can use `go run ./cmd/api` without using the application docker container
-
-2. Make sure you are running the `mongodb` container (`docker compose up -d mongodb`)
-
 ## Testing
 
-**Note** To generate/update mocks, run `go generate ./...`
+**Note** To generate/update mocks, run `task mock`
 
-1. Make you are running the `mongodb-test` container (`docker compose up -d mongodb-test`)
-2. Run `go test ./...` to run all the existing tests
+Run `task test` to run all the existing tests
+
+## Taskfile Commands
+
+Here are the available commands from the [Taskfile](https://taskfile.dev/):
+
+* `run`: Start application services
+* `dev`: Run dev environment
+* `test`: Run application tests
+* `mock`: Generate mocks using gomock
 
 ## API Documentation
 
