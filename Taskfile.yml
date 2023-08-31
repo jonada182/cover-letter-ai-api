@@ -4,24 +4,22 @@ tasks:
   stop:
     desc: stop application services
     cmds:
-      - docker compose down
+      - docker compose --file=docker-compose.yml down
   run:
     desc: start application services
     cmds:
-      - docker compose down mongodb api
-      - docker compose up -d --build --quiet-pull mongodb api
+      - docker compose --file=docker-compose.yml up -d --build --quiet-pull
   dev:
     desc: run dev environment
     cmds:
-      - docker compose down
-      - docker compose up -d --build --quiet-pull mongodb
+      - docker compose --file=docker-compose.yml up -d --build --quiet-pull mongodb
       - go run ./cmd/api
   test:
     desc: run application tests
     cmds:
-      - docker compose up -d --quiet-pull mongodb-test > /dev/null 2>&1
+      - docker compose --file=docker-compose-test.yml up -d --quiet-pull
       - go test ./...
-      - docker compose down mongodb-test > /dev/null 2>&1
+      - docker compose --file=docker-compose-test.yml down
   mock:
     desc: generate mocks using gomock
     cmds:
