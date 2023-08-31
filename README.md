@@ -27,6 +27,7 @@ Run `task test` to run all the existing tests
 Here are the available commands from the [Taskfile](https://taskfile.dev/):
 
 * `run`: Start application services
+* `stop`: Stop application services
 * `dev`: Run dev environment
 * `test`: Run application tests
 * `mock`: Generate mocks using gomock

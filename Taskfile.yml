@@ -1,6 +1,10 @@
 version: '3'
 
 tasks:
+  stop:
+    desc: stop application services
+    cmds:
+      - docker compose down
   run:
     desc: start application services
     cmds:
