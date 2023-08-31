@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/jonada182/cover-letter-ai-api/types"
 
@@ -25,8 +26,9 @@ type OpenAIClient struct {
 }
 
 type OpenAI interface {
-	GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s types.StoreClient) (string, int, error)
-	GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error)
+	GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, *types.CareerProfile, error)
+	ParseCoverLetter(coverLetter *string, careerProfile *types.CareerProfile, jobPosting *types.JobPosting) (string, error)
 }
 
 // NewOpenAIClient initializes an OpenAI client with the API key from the .env file.
@@ -42,30 +44,36 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 }
 
 // GenerateChatGPTCoverLetter uses the OpenAI completions API to generate a cover letter using the given parameters
-func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s types.StoreClient) (string, int, error) {
+func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error) {
 	promptMessages := []types.ChatGTPRequestMessage{
 		{
 			Role:    "system",
-			Content: "You are professional career advisor.",
+			Content: "I am professional career advisor. I write cover letters",
 		},
 	}
 
 	// Add career profile information to prompt
-	careerProfileInfo, err := oa.GetCareerProfileInfoPrompt(email, s)
+	careerProfilePrompt, careerProfile, err := oa.GetCareerProfileInfoPrompt(email, s)
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
-	if careerProfileInfo != "" {
+	if careerProfilePrompt != "" {
 		promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
 			Role:    "user",
-			Content: careerProfileInfo,
+			Content: careerProfilePrompt,
 		})
 	}
 
-	// Add cover letter details to prompt
+	// Create cover letter prompt using the jobPosting data
+	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
+	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
 	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
 		Role:    "user",
-		Content: fmt.Sprintf("I need the message body of a cover letter for job. 3 paragraphs, 300 words. ONLY letter body. Details below:%s", prompt),
+		Content: fmt.Sprintf("Write a cover letter for a job. 3 paragraphs, 300 words. Details below:%s", prompt),
+	})
+	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
+		Role:    "user",
+		Content: "cover letter template:\n[Cover Letter message]",
 	})
 
 	requestBody := &types.ChatGPTRequest{
@@ -107,18 +115,23 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	if err := json.Unmarshal(responseBody, &responseData); err != nil {
 		return "", http.StatusInternalServerError, err
 	}
+	coverLetter := responseData.Choices[0].Message.Content
+	coverLetter, err = oa.ParseCoverLetter(&coverLetter, careerProfile, jobPosting)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
 
 	// Return the content for the last received message from OpenAI if the response was successful
-	return responseData.Choices[0].Message.Content, http.StatusOK, nil
+	return coverLetter, http.StatusOK, nil
 }
 
 // GetCareerProfileInfoPrompt returns a prompt string with the CareerProfile data retrieved using the given email
-func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, error) {
+func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, *types.CareerProfile, error) {
 	info := ""
 
 	careerProfile, err := s.GetCareerProfile(email)
 	if err != nil {
-		return "", err
+		return "", &types.CareerProfile{}, err
 	}
 
 	// Concatenate each of the career profile fields into a single message
@@ -138,5 +151,36 @@ func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreCl
 	}
 	info = builder.String()
 
-	return info, nil
+	return info, careerProfile, nil
+}
+
+// ParseCoverLetter adds contact information to the cover letter from the CareerProfile
+func (oa *OpenAIClient) ParseCoverLetter(coverLetter *string, careerProfile *types.CareerProfile, jobPosting *types.JobPosting) (string, error) {
+	if *coverLetter == "" {
+		return "", errors.New("received an empty cover letter from OpenAI")
+	}
+
+	template := `[Your Name]\n[Your Address]\n[City, State, ZIP]\n[Email Address]\n[Phone Number]\n[Date]\n\n[Employer's Name]\n[Company Name]\n[Company Address]\n[City, State, ZIP]\n\n%s`
+	parsedLetter := fmt.Sprintf(template, *coverLetter)
+
+	year, month, day := time.Now().Date()
+	coverLetterKeywords := map[string]string{
+		"[Your Name]":             fmt.Sprintf("%s %s", careerProfile.FirstName, careerProfile.LastName),
+		"[Your Address]":          careerProfile.ContactInfo.Address,
+		"[Email Address]":         careerProfile.ContactInfo.Email,
+		"[Phone Number]":          careerProfile.ContactInfo.Phone,
+		"[Date]":                  fmt.Sprintf("%s %d, %d", month.String(), day, year),
+		"[Employer's Name]":       "Hiring Manager",
+		"[Recipient's Name]":      "Hiring Manager",
+		"[Company Name]":          jobPosting.CompanyName,
+		"[Company Address]":       "",
+		"[City, State, ZIP]":      "",
+		"[City, State, ZIP Code]": "",
+	}
+
+	for keyword, value := range coverLetterKeywords {
+		parsedLetter = strings.Replace(parsedLetter, keyword, value, -1)
+	}
+
+	return parsedLetter, nil
 }

@@ -36,7 +36,7 @@ func (m *MockOpenAI) EXPECT() *MockOpenAIMockRecorder {
 }
 
 // GenerateChatGPTCoverLetter mocks base method.
-func (m *MockOpenAI) GenerateChatGPTCoverLetter(arg0 *gin.Context, arg1, arg2 string, arg3 types.StoreClient) (string, int, error) {
+func (m *MockOpenAI) GenerateChatGPTCoverLetter(arg0 *gin.Context, arg1 string, arg2 *types.JobPosting, arg3 types.StoreClient) (string, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateChatGPTCoverLetter", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(string)
@@ -52,16 +52,32 @@ func (mr *MockOpenAIMockRecorder) GenerateChatGPTCoverLetter(arg0, arg1, arg2, a
 }
 
 // GetCareerProfileInfoPrompt mocks base method.
-func (m *MockOpenAI) GetCareerProfileInfoPrompt(arg0 string, arg1 types.StoreClient) (string, error) {
+func (m *MockOpenAI) GetCareerProfileInfoPrompt(arg0 string, arg1 types.StoreClient) (string, *types.CareerProfile, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCareerProfileInfoPrompt", arg0, arg1)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(*types.CareerProfile)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetCareerProfileInfoPrompt indicates an expected call of GetCareerProfileInfoPrompt.
 func (mr *MockOpenAIMockRecorder) GetCareerProfileInfoPrompt(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfileInfoPrompt", reflect.TypeOf((*MockOpenAI)(nil).GetCareerProfileInfoPrompt), arg0, arg1)
+}
+
+// ParseCoverLetter mocks base method.
+func (m *MockOpenAI) ParseCoverLetter(arg0 *string, arg1 *types.CareerProfile, arg2 *types.JobPosting) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseCoverLetter", arg0, arg1, arg2)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseCoverLetter indicates an expected call of ParseCoverLetter.
+func (mr *MockOpenAIMockRecorder) ParseCoverLetter(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseCoverLetter", reflect.TypeOf((*MockOpenAI)(nil).ParseCoverLetter), arg0, arg1, arg2)
 }

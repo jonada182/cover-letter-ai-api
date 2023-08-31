@@ -66,12 +66,8 @@ func (h *Handler) HandleCoverLetter(c *gin.Context) {
 		return
 	}
 
-	// Create cover letter prompt using the jobPosting data
-	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
-	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
-
 	// Call OpenAI to generate a cover letter with the given parameters
-	coverLetter, statusCode, err := h.OpenAIClient.GenerateChatGPTCoverLetter(c, coverLetterRequest.Email, prompt, h.StoreClient)
+	coverLetter, statusCode, err := h.OpenAIClient.GenerateChatGPTCoverLetter(c, coverLetterRequest.Email, &jobPosting, h.StoreClient)
 	if err != nil {
 		c.JSON(statusCode, gin.H{"error": err.Error()})
 		return

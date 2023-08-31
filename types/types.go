@@ -88,6 +88,7 @@ type StoreClient interface {
 }
 
 type OpenAIClient interface {
-	GenerateChatGPTCoverLetter(c *gin.Context, email string, prompt string, s StoreClient) (string, int, error)
-	GetCareerProfileInfoPrompt(email string, s StoreClient) (string, error)
+	GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *JobPosting, s StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(email string, s StoreClient) (string, *CareerProfile, error)
+	ParseCoverLetter(coverLetter *string, careerProfile *CareerProfile, jobPosting *JobPosting) (string, error)
 }

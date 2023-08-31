@@ -92,7 +92,7 @@ func TestHandler(t *testing.T) {
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockOpenAI.EXPECT().
-				GenerateChatGPTCoverLetter(gomock.Any(), gomock.Eq(email), gomock.Any(), gomock.Any()).
+				GenerateChatGPTCoverLetter(gomock.Any(), gomock.Eq(email), gomock.Eq(&requestData.JobPosting), gomock.Any()).
 				Return("perfect cover letter", 200, nil).
 				Times(1)
 
