@@ -160,8 +160,8 @@ func (oa *OpenAIClient) ParseCoverLetter(coverLetter *string, careerProfile *typ
 		return "", errors.New("received an empty cover letter from OpenAI")
 	}
 
-	template := `[Your Name]\n[Your Address]\n[City, State, ZIP]\n[Email Address]\n[Phone Number]\n[Date]\n\n[Employer's Name]\n[Company Name]\n[Company Address]\n[City, State, ZIP]\n\n%s`
-	parsedLetter := fmt.Sprintf(template, *coverLetter)
+	template := "[Your Name]\n[Your Address]\n[City, State, ZIP]\n[Email Address]\n[Phone Number]\n[Date]\n\n[Employer's Name]\n[Company Name]\n[Company Address]\n[City, State, ZIP]\n\n"
+	parsedLetter := template + *coverLetter
 
 	year, month, day := time.Now().Date()
 	coverLetterKeywords := map[string]string{
