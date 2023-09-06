@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -48,7 +49,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	promptMessages := []types.ChatGTPRequestMessage{
 		{
 			Role:    "system",
-			Content: "I am professional career advisor. I write cover letters",
+			Content: "You write cover letters when I give you job details. Limit: 3 paragraphs, 300 words. Start with: Dear [Employer's Name],",
 		},
 	}
 
@@ -57,24 +58,23 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
-	if careerProfilePrompt != "" {
-		promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
-			Role:    "user",
-			Content: careerProfilePrompt,
-		})
-	}
 
 	// Create cover letter prompt using the jobPosting data
-	promptFormat := "Company:%s\nJob Role:%s\nDetails:%s\nSkills:%s"
-	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPosting.Details, jobPosting.Skills)
+	emptyLinesPattern := `\s*\n`
+	re := regexp.MustCompile(emptyLinesPattern)
+	jobPostingDetails := re.ReplaceAllString(jobPosting.Details, "\n")
+	promptFormat := "Company:%s\nJob Role:%s\nDetails:\n%s\nSkills:%s"
+	prompt := fmt.Sprintf(promptFormat, jobPosting.CompanyName, jobPosting.JobRole, jobPostingDetails, jobPosting.Skills)
+	coverLetterPrompt := fmt.Sprintf("Write a cover letter for this job:\n%s", prompt)
+	if careerProfilePrompt != "" {
+		coverLetterPrompt = fmt.Sprintf("%s\n\n%s", coverLetterPrompt, careerProfilePrompt)
+	}
+
 	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
 		Role:    "user",
-		Content: fmt.Sprintf("Write a cover letter for a job. 3 paragraphs, 300 words. Details below:%s", prompt),
+		Content: coverLetterPrompt,
 	})
-	promptMessages = append(promptMessages, types.ChatGTPRequestMessage{
-		Role:    "user",
-		Content: "cover letter template:\n[Cover Letter message]",
-	})
+	fmt.Printf("OpenAI prompt:\n%s\n", coverLetterPrompt)
 
 	requestBody := &types.ChatGPTRequest{
 		Model:    oa.model,
@@ -170,6 +170,7 @@ func (oa *OpenAIClient) ParseCoverLetter(coverLetter *string, careerProfile *typ
 		"[Email Address]":         careerProfile.ContactInfo.Email,
 		"[Phone Number]":          careerProfile.ContactInfo.Phone,
 		"[Date]":                  fmt.Sprintf("%s %d, %d", month.String(), day, year),
+		"[Today's Date]":          fmt.Sprintf("%s %d, %d", month.String(), day, year),
 		"[Employer's Name]":       "Hiring Manager",
 		"[Recipient's Name]":      "Hiring Manager",
 		"[Company Name]":          jobPosting.CompanyName,
