@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jonada182/cover-letter-ai-api/types"
 
@@ -15,6 +16,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	JobApplicationSubmission = 0
+	JobApplicationInterview  = 1
+	JobApplicationAssessment = 2
+	JobApplicationOffer      = 3
+	JobApplicationCompletion = 4
+	JobApplicationRejection  = 5
 )
 
 type StoreClient struct {
@@ -27,6 +37,8 @@ type Store interface {
 	Disconnect(ctx context.Context, client *mongo.Client)
 	GetCareerProfile(email string) (*types.CareerProfile, error)
 	StoreCareerProfile(careerProfileRequest *types.CareerProfileRequest) (*types.CareerProfile, string, error)
+	GetJobApplications(profileId uuid.UUID) (*[]types.JobApplication, error)
+	StoreJobApplication(jobApplicationRequest *types.JobApplication) (*types.JobApplication, string, error)
 }
 
 // NewStore returns a store client, which has methods to interact with MongoDB
@@ -81,6 +93,7 @@ func (store *StoreClient) StoreCareerProfile(careerProfileRequest *types.CareerP
 
 	// Get the profiles collection from the database client
 	collection := mongoClient.Database(store.dbName).Collection("profiles")
+	// TODO: Retrieve ID from the request to use
 	careerProfileRow := &types.CareerProfile{
 		ID:              uuid.New(),
 		FirstName:       careerProfileRequest.FirstName,
@@ -137,4 +150,100 @@ func (store *StoreClient) GetCareerProfile(email string) (*types.CareerProfile, 
 	}
 
 	return &careerProfile, nil
+}
+
+// GetJobApplications retrieves an array of job applications from MongoDB
+func (store *StoreClient) GetJobApplications(profileId uuid.UUID) (*[]types.JobApplication, error) {
+	mongoClient, ctx, err := store.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer store.Disconnect(ctx, mongoClient)
+
+	var jobApplications []types.JobApplication
+	// Get the job_applications collection from the database client
+	collection := mongoClient.Database(store.dbName).Collection("job_applications")
+	// Find job applications using the career profile id
+	log.Printf("Find applications for %s", profileId.String())
+	cur, err := collection.Find(ctx, bson.M{"profile_id": profileId})
+	if err != nil {
+		log.Printf("Failed to retrieve job applications:%s", err.Error())
+		return nil, err
+	}
+	cur.All(ctx, &jobApplications)
+	defer cur.Close(ctx)
+	if cur.Err() != nil {
+		log.Printf("Failed to retrieve job applications:%s", err.Error())
+		return nil, err
+	}
+
+	if len(jobApplications) == 0 {
+		return nil, errors.New("no job applications found")
+	}
+
+	return &jobApplications, nil
+}
+
+// StoreJobApplication upserts a JobApplication in MongoDB
+func (store *StoreClient) StoreJobApplication(jobApplicationRequest *types.JobApplication) (*types.JobApplication, string, error) {
+	mongoClient, ctx, err := store.Connect()
+	if err != nil {
+		return nil, "", err
+	}
+	defer store.Disconnect(ctx, mongoClient)
+	isNew := true
+	jobApplicationID := uuid.New()
+	if jobApplicationRequest.ID != uuid.Nil {
+		isNew = false
+		jobApplicationID = jobApplicationRequest.ID
+	}
+
+	// Get the profiles collection from the database client
+	collection := mongoClient.Database(store.dbName).Collection("job_applications")
+	currentDateTime := time.Now().Format("2006-01-02 15:04:05")
+	jobApplicationRow := &types.JobApplication{
+		ID:          jobApplicationID,
+		ProfileID:   jobApplicationRequest.ProfileID,
+		CompanyName: jobApplicationRequest.CompanyName,
+		JobRole:     jobApplicationRequest.JobRole,
+		URL:         jobApplicationRequest.URL,
+		Events:      jobApplicationRequest.Events,
+		CreatedAt:   &currentDateTime,
+		UpdatedAt:   &currentDateTime,
+	}
+
+	if isNew && jobApplicationRow.Events == nil {
+		jobApplicationRow.Events = &[]types.JobApplicationEvent{}
+		*jobApplicationRow.Events = append(*jobApplicationRow.Events, types.JobApplicationEvent{
+			Type:        JobApplicationSubmission,
+			Description: "Application Sent",
+			Date:        currentDateTime,
+		})
+	}
+
+	// Set up update options to ensure the values are overwritten in the database
+	update := bson.M{"$set": jobApplicationRow}
+	updateOptions := options.Update().SetUpsert(true)
+	result, err := collection.UpdateOne(
+		ctx,
+		bson.M{"id": jobApplicationRow.ID},
+		update,
+		updateOptions,
+	)
+	if err != nil {
+		log.Printf("Failed to update job application:%s", err.Error())
+		return nil, "", err
+	}
+
+	// Check if upsert resulted in an insert (new document)
+	var responseMsg string
+	if result.UpsertedCount > 0 {
+		responseMsg = "job application has been inserted"
+		fmt.Printf("%s:", result.UpsertedID)
+	} else {
+		responseMsg = "job application has been updated"
+		fmt.Printf("%d:", result.ModifiedCount)
+	}
+
+	return jobApplicationRow, responseMsg, nil
 }

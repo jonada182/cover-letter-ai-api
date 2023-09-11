@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	types "github.com/jonada182/cover-letter-ai-api/types"
 	mongo "go.mongodb.org/mongo-driver/mongo"
 	gomock "go.uber.org/mock/gomock"
@@ -79,6 +80,21 @@ func (mr *MockStoreMockRecorder) GetCareerProfile(arg0 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfile", reflect.TypeOf((*MockStore)(nil).GetCareerProfile), arg0)
 }
 
+// GetJobApplications mocks base method.
+func (m *MockStore) GetJobApplications(arg0 uuid.UUID) (*[]types.JobApplication, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetJobApplications", arg0)
+	ret0, _ := ret[0].(*[]types.JobApplication)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetJobApplications indicates an expected call of GetJobApplications.
+func (mr *MockStoreMockRecorder) GetJobApplications(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobApplications", reflect.TypeOf((*MockStore)(nil).GetJobApplications), arg0)
+}
+
 // StoreCareerProfile mocks base method.
 func (m *MockStore) StoreCareerProfile(arg0 *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
 	m.ctrl.T.Helper()
@@ -93,4 +109,20 @@ func (m *MockStore) StoreCareerProfile(arg0 *types.CareerProfileRequest) (*types
 func (mr *MockStoreMockRecorder) StoreCareerProfile(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreCareerProfile", reflect.TypeOf((*MockStore)(nil).StoreCareerProfile), arg0)
+}
+
+// StoreJobApplication mocks base method.
+func (m *MockStore) StoreJobApplication(arg0 *types.JobApplication) (*types.JobApplication, string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StoreJobApplication", arg0)
+	ret0, _ := ret[0].(*types.JobApplication)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// StoreJobApplication indicates an expected call of StoreJobApplication.
+func (mr *MockStoreMockRecorder) StoreJobApplication(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreJobApplication", reflect.TypeOf((*MockStore)(nil).StoreJobApplication), arg0)
 }

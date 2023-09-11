@@ -59,6 +59,18 @@ func (mr *MockHandlerInterfaceMockRecorder) HandleCreateCareerProfile(arg0 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateCareerProfile", reflect.TypeOf((*MockHandlerInterface)(nil).HandleCreateCareerProfile), arg0)
 }
 
+// HandleCreateJobApplication mocks base method.
+func (m *MockHandlerInterface) HandleCreateJobApplication(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleCreateJobApplication", arg0)
+}
+
+// HandleCreateJobApplication indicates an expected call of HandleCreateJobApplication.
+func (mr *MockHandlerInterfaceMockRecorder) HandleCreateJobApplication(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateJobApplication", reflect.TypeOf((*MockHandlerInterface)(nil).HandleCreateJobApplication), arg0)
+}
+
 // HandleGetCareerProfile mocks base method.
 func (m *MockHandlerInterface) HandleGetCareerProfile(arg0 *gin.Context) {
 	m.ctrl.T.Helper()
@@ -69,6 +81,18 @@ func (m *MockHandlerInterface) HandleGetCareerProfile(arg0 *gin.Context) {
 func (mr *MockHandlerInterfaceMockRecorder) HandleGetCareerProfile(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetCareerProfile", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetCareerProfile), arg0)
+}
+
+// HandleGetJobApplications mocks base method.
+func (m *MockHandlerInterface) HandleGetJobApplications(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleGetJobApplications", arg0)
+}
+
+// HandleGetJobApplications indicates an expected call of HandleGetJobApplications.
+func (mr *MockHandlerInterfaceMockRecorder) HandleGetJobApplications(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetJobApplications", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetJobApplications), arg0)
 }
 
 // HandleIndex mocks base method.
