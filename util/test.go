@@ -31,7 +31,7 @@ func SetupTestCareerProfile(email string) (careerProfile *types.CareerProfile, m
 	if err != nil {
 		return &types.CareerProfile{}, "", err
 	}
-	careerProfile, message, err = s.StoreCareerProfile(&types.CareerProfileRequest{
+	careerProfile, message, err = s.StoreCareerProfile(&types.CareerProfile{
 		FirstName:       "John",
 		LastName:        "Doe",
 		Headline:        "Manager",

@@ -65,19 +65,34 @@ func (mr *MockStoreMockRecorder) Disconnect(arg0, arg1 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockStore)(nil).Disconnect), arg0, arg1)
 }
 
-// GetCareerProfile mocks base method.
-func (m *MockStore) GetCareerProfile(arg0 string) (*types.CareerProfile, error) {
+// GetCareerProfileByEmail mocks base method.
+func (m *MockStore) GetCareerProfileByEmail(arg0 string) (*types.CareerProfile, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCareerProfile", arg0)
+	ret := m.ctrl.Call(m, "GetCareerProfileByEmail", arg0)
 	ret0, _ := ret[0].(*types.CareerProfile)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetCareerProfile indicates an expected call of GetCareerProfile.
-func (mr *MockStoreMockRecorder) GetCareerProfile(arg0 interface{}) *gomock.Call {
+// GetCareerProfileByEmail indicates an expected call of GetCareerProfileByEmail.
+func (mr *MockStoreMockRecorder) GetCareerProfileByEmail(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfile", reflect.TypeOf((*MockStore)(nil).GetCareerProfile), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfileByEmail", reflect.TypeOf((*MockStore)(nil).GetCareerProfileByEmail), arg0)
+}
+
+// GetCareerProfileByID mocks base method.
+func (m *MockStore) GetCareerProfileByID(arg0 uuid.UUID) (*types.CareerProfile, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCareerProfileByID", arg0)
+	ret0, _ := ret[0].(*types.CareerProfile)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCareerProfileByID indicates an expected call of GetCareerProfileByID.
+func (mr *MockStoreMockRecorder) GetCareerProfileByID(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfileByID", reflect.TypeOf((*MockStore)(nil).GetCareerProfileByID), arg0)
 }
 
 // GetJobApplications mocks base method.
@@ -96,7 +111,7 @@ func (mr *MockStoreMockRecorder) GetJobApplications(arg0 interface{}) *gomock.Ca
 }
 
 // StoreCareerProfile mocks base method.
-func (m *MockStore) StoreCareerProfile(arg0 *types.CareerProfileRequest) (*types.CareerProfile, string, error) {
+func (m *MockStore) StoreCareerProfile(arg0 *types.CareerProfile) (*types.CareerProfile, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StoreCareerProfile", arg0)
 	ret0, _ := ret[0].(*types.CareerProfile)

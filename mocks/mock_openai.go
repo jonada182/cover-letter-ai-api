@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gin "github.com/gin-gonic/gin"
+	uuid "github.com/google/uuid"
 	types "github.com/jonada182/cover-letter-ai-api/types"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -36,7 +37,7 @@ func (m *MockOpenAI) EXPECT() *MockOpenAIMockRecorder {
 }
 
 // GenerateChatGPTCoverLetter mocks base method.
-func (m *MockOpenAI) GenerateChatGPTCoverLetter(arg0 *gin.Context, arg1 string, arg2 *types.JobPosting, arg3 types.StoreClient) (string, int, error) {
+func (m *MockOpenAI) GenerateChatGPTCoverLetter(arg0 *gin.Context, arg1 uuid.UUID, arg2 *types.JobPosting, arg3 types.StoreClient) (string, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateChatGPTCoverLetter", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(string)
@@ -52,7 +53,7 @@ func (mr *MockOpenAIMockRecorder) GenerateChatGPTCoverLetter(arg0, arg1, arg2, a
 }
 
 // GetCareerProfileInfoPrompt mocks base method.
-func (m *MockOpenAI) GetCareerProfileInfoPrompt(arg0 string, arg1 types.StoreClient) (string, *types.CareerProfile, error) {
+func (m *MockOpenAI) GetCareerProfileInfoPrompt(arg0 uuid.UUID, arg1 types.StoreClient) (string, *types.CareerProfile, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCareerProfileInfoPrompt", arg0, arg1)
 	ret0, _ := ret[0].(string)

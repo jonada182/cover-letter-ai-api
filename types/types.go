@@ -9,7 +9,7 @@ import (
 )
 
 type CoverLetterRequest struct {
-	Email      string     `json:"email"`
+	ProfileID  uuid.UUID  `json:"profile_id"`
 	JobPosting JobPosting `json:"job_posting"`
 }
 
@@ -43,16 +43,6 @@ type ChatGPTMessage struct {
 
 type ChatGPTResponseData struct {
 	Choices []ChatGPTResponseChoice `json:"choices"`
-}
-
-type CareerProfileRequest struct {
-	FirstName       string       `json:"first_name"`
-	LastName        string       `json:"last_name"`
-	Headline        string       `json:"headline"`
-	ExperienceYears uint         `json:"experience_years"`
-	Summary         *string      `json:"summary"`
-	Skills          *[]string    `json:"skills"`
-	ContactInfo     *ContactInfo `json:"contact_info"`
 }
 
 type CareerProfile struct {
@@ -91,6 +81,66 @@ type JobApplicationEvent struct {
 	AdditionalNotes *string `bson:"additional_notes" json:"additional_notes"`
 }
 
+type LinkedInTokenResponse struct {
+	AccessToken           string  `json:"access_token"`
+	ExpiresIn             float64 `json:"expires_in"`
+	RefreshToken          string  `json:"refresh_token"`
+	RefreshTokenExpiresIn float64 `json:"refresh_token_expires_in"`
+	Scope                 string  `json:"scope"`
+}
+
+func MapToLinkedInTokenResponse(data map[string]interface{}) LinkedInTokenResponse {
+	var mappedData LinkedInTokenResponse
+	if accessToken, ok := data["access_token"].(string); ok {
+		mappedData.AccessToken = accessToken
+	}
+	if expiresIn, ok := data["expires_in"].(float64); ok {
+		mappedData.ExpiresIn = expiresIn
+	}
+	if refreshToken, ok := data["refresh_token"].(string); ok {
+		mappedData.RefreshToken = refreshToken
+	}
+	if refreshTokenExpiresIn, ok := data["refresh_token_expires_in"].(float64); ok {
+		mappedData.RefreshTokenExpiresIn = refreshTokenExpiresIn
+	}
+	if scope, ok := data["scope"].(string); ok {
+		mappedData.Scope = scope
+	}
+	return mappedData
+}
+
+type LinkedInUserData struct {
+	Sub        string `json:"sub"`
+	Name       string `json:"name"`
+	GivenName  string `json:"given_name"`
+	FamilyName string `json:"family_name"`
+	Picture    string `json:"picture"`
+	Email      string `json:"email"`
+}
+
+func MapToLinkedInUserData(data map[string]interface{}) LinkedInUserData {
+	var mappedData LinkedInUserData
+	if sub, ok := data["sub"].(string); ok {
+		mappedData.Sub = sub
+	}
+	if name, ok := data["name"].(string); ok {
+		mappedData.Name = name
+	}
+	if givenName, ok := data["given_name"].(string); ok {
+		mappedData.GivenName = givenName
+	}
+	if familyName, ok := data["family_name"].(string); ok {
+		mappedData.FamilyName = familyName
+	}
+	if picture, ok := data["picture"].(string); ok {
+		mappedData.Picture = picture
+	}
+	if email, ok := data["email"].(string); ok {
+		mappedData.Email = email
+	}
+	return mappedData
+}
+
 type Handler interface {
 	HandleIndex(c *gin.Context)
 	HandleCoverLetter(c *gin.Context)
@@ -98,19 +148,22 @@ type Handler interface {
 	HandleGetCareerProfile(c *gin.Context)
 	HandleCreateJobApplication(c *gin.Context)
 	HandleGetJobApplications(c *gin.Context)
+	HandleLinkedInCallback(c *gin.Context)
+	HandleGetUser(c *gin.Context)
 }
 
 type StoreClient interface {
 	Connect() (*mongo.Client, context.Context, error)
 	Disconnect(ctx context.Context, client *mongo.Client)
-	StoreCareerProfile(careerProfileRequest *CareerProfileRequest) (*CareerProfile, string, error)
-	GetCareerProfile(email string) (*CareerProfile, error)
+	StoreCareerProfile(careerProfile *CareerProfile) (*CareerProfile, string, error)
+	GetCareerProfileByEmail(email string) (*CareerProfile, error)
+	GetCareerProfileByID(profileId uuid.UUID) (*CareerProfile, error)
 	GetJobApplications(profileId uuid.UUID) (*[]JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *JobApplication) (*JobApplication, string, error)
 }
 
 type OpenAIClient interface {
-	GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *JobPosting, s StoreClient) (string, int, error)
-	GetCareerProfileInfoPrompt(email string, s StoreClient) (string, *CareerProfile, error)
+	GenerateChatGPTCoverLetter(c *gin.Context, profileId uuid.UUID, jobPosting *JobPosting, s StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(profileId uuid.UUID, s StoreClient) (string, *CareerProfile, error)
 	ParseCoverLetter(coverLetter *string, careerProfile *CareerProfile, jobPosting *JobPosting) (string, error)
 }

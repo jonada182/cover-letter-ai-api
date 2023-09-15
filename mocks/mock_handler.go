@@ -95,6 +95,18 @@ func (mr *MockHandlerInterfaceMockRecorder) HandleGetJobApplications(arg0 interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetJobApplications", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetJobApplications), arg0)
 }
 
+// HandleGetUser mocks base method.
+func (m *MockHandlerInterface) HandleGetUser(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleGetUser", arg0)
+}
+
+// HandleGetUser indicates an expected call of HandleGetUser.
+func (mr *MockHandlerInterfaceMockRecorder) HandleGetUser(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetUser", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetUser), arg0)
+}
+
 // HandleIndex mocks base method.
 func (m *MockHandlerInterface) HandleIndex(arg0 *gin.Context) {
 	m.ctrl.T.Helper()
@@ -105,4 +117,16 @@ func (m *MockHandlerInterface) HandleIndex(arg0 *gin.Context) {
 func (mr *MockHandlerInterfaceMockRecorder) HandleIndex(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleIndex", reflect.TypeOf((*MockHandlerInterface)(nil).HandleIndex), arg0)
+}
+
+// HandleLinkedInCallback mocks base method.
+func (m *MockHandlerInterface) HandleLinkedInCallback(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleLinkedInCallback", arg0)
+}
+
+// HandleLinkedInCallback indicates an expected call of HandleLinkedInCallback.
+func (mr *MockHandlerInterfaceMockRecorder) HandleLinkedInCallback(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleLinkedInCallback", reflect.TypeOf((*MockHandlerInterface)(nil).HandleLinkedInCallback), arg0)
 }

@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jonada182/cover-letter-ai-api/types"
 
 	"github.com/gin-gonic/gin"
@@ -27,8 +28,8 @@ type OpenAIClient struct {
 }
 
 type OpenAI interface {
-	GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error)
-	GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, *types.CareerProfile, error)
+	GenerateChatGPTCoverLetter(c *gin.Context, profileId uuid.UUID, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error)
+	GetCareerProfileInfoPrompt(profileId uuid.UUID, s types.StoreClient) (string, *types.CareerProfile, error)
 	ParseCoverLetter(coverLetter *string, careerProfile *types.CareerProfile, jobPosting *types.JobPosting) (string, error)
 }
 
@@ -45,7 +46,7 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 }
 
 // GenerateChatGPTCoverLetter uses the OpenAI completions API to generate a cover letter using the given parameters
-func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error) {
+func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, profileId uuid.UUID, jobPosting *types.JobPosting, s types.StoreClient) (string, int, error) {
 	promptMessages := []types.ChatGTPRequestMessage{
 		{
 			Role:    "system",
@@ -54,7 +55,7 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 	}
 
 	// Add career profile information to prompt
-	careerProfilePrompt, careerProfile, err := oa.GetCareerProfileInfoPrompt(email, s)
+	careerProfilePrompt, careerProfile, err := oa.GetCareerProfileInfoPrompt(profileId, s)
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
@@ -126,10 +127,10 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, email string,
 }
 
 // GetCareerProfileInfoPrompt returns a prompt string with the CareerProfile data retrieved using the given email
-func (oa *OpenAIClient) GetCareerProfileInfoPrompt(email string, s types.StoreClient) (string, *types.CareerProfile, error) {
+func (oa *OpenAIClient) GetCareerProfileInfoPrompt(profileId uuid.UUID, s types.StoreClient) (string, *types.CareerProfile, error) {
 	info := ""
 
-	careerProfile, err := s.GetCareerProfile(email)
+	careerProfile, err := s.GetCareerProfileByID(profileId)
 	if err != nil {
 		return "", &types.CareerProfile{}, err
 	}

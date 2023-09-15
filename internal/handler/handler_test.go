@@ -72,8 +72,9 @@ func TestHandler(t *testing.T) {
 			util.SetupTestEnvironment(t)
 
 			email := "test@email"
+			profileId := uuid.New()
 			requestData := types.CoverLetterRequest{
-				Email: email,
+				ProfileID: profileId,
 				JobPosting: types.JobPosting{
 					CompanyName: "Acme",
 					JobRole:     "Manager",
@@ -92,7 +93,7 @@ func TestHandler(t *testing.T) {
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockOpenAI.EXPECT().
-				GenerateChatGPTCoverLetter(gomock.Any(), gomock.Eq(email), gomock.Eq(&requestData.JobPosting), gomock.Any()).
+				GenerateChatGPTCoverLetter(gomock.Any(), gomock.Eq(profileId), gomock.Eq(&requestData.JobPosting), gomock.Any()).
 				Return("perfect cover letter", 200, nil).
 				Times(1)
 
@@ -153,7 +154,7 @@ func TestHandler(t *testing.T) {
 			util.SetupTestEnvironment(t)
 
 			email := "test@email"
-			requestData := types.CareerProfileRequest{
+			requestData := types.CareerProfile{
 				FirstName:       "John",
 				LastName:        "Doe",
 				Headline:        "Manager",
@@ -214,8 +215,9 @@ func TestHandler(t *testing.T) {
 		util.SetupTestEnvironment(t)
 
 		email := "test@email"
+		profileId := uuid.New()
 		expectedResult := &types.CareerProfile{
-			ID:              uuid.New(),
+			ID:              profileId,
 			FirstName:       "John",
 			LastName:        "Doe",
 			Headline:        "Manager",
@@ -234,15 +236,15 @@ func TestHandler(t *testing.T) {
 		mockOpenAI := mocks.NewMockOpenAI(ctrl)
 		mockStore.
 			EXPECT().
-			GetCareerProfile(gomock.Eq(email)).
+			GetCareerProfileByID(gomock.Eq(profileId)).
 			Return(expectedResult, nil).
 			Times(1)
 
 		// Setup mocks and expectations
 		handler := NewHandler(mockStore, mockOpenAI)
-		router.GET("/career-profile/:email", handler.HandleGetCareerProfile)
+		router.GET("/career-profile/:profile_id", handler.HandleGetCareerProfile)
 
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/career-profile/%s", email), nil)
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/career-profile/%s", profileId), nil)
 		assert.NoError(t, err)
 
 		// Serve the request
