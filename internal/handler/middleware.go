@@ -21,7 +21,7 @@ func Middleware() gin.HandlerFunc {
 			authorizationHeader := c.GetHeader("Authorization")
 			tokenParts := strings.Split(authorizationHeader, " ")
 			if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token provided"})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized request"})
 				return
 			}
 			accessToken := tokenParts[1]
