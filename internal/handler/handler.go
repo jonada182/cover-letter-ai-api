@@ -182,7 +182,7 @@ func (h *Handler) HandleGetJobApplications(c *gin.Context) {
 
 	// Call store method to retrieve []JobApplication from MongoDB
 	jobApplications, err := h.StoreClient.GetJobApplications(profileId)
-	if err != nil && strings.Contains(err.Error(), "no document") {
+	if err != nil && strings.Contains(err.Error(), "no job applications found") {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no job applications found"})
 		return
 	}
