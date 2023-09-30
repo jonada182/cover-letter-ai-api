@@ -44,7 +44,7 @@ func (h *Handler) SetupRouter() *gin.Engine {
 	router.GET("/", h.HandleIndex)
 	router.POST("/cover-letter", h.HandleCoverLetter)
 	router.POST("/career-profile", h.HandleCreateCareerProfile)
-	router.GET("/career-profile/:profile_id", h.HandleGetCareerProfile)
+	router.GET("/career-profile/:id", h.HandleGetCareerProfile)
 	router.POST("/job-applications", h.HandleCreateJobApplication)
 	router.GET("/job-applications/:profile_id", h.HandleGetJobApplications)
 	router.DELETE("/job-applications/:id", h.HandleDeleteJobApplication)
