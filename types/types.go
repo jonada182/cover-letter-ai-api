@@ -148,6 +148,7 @@ type Handler interface {
 	HandleGetCareerProfile(c *gin.Context)
 	HandleCreateJobApplication(c *gin.Context)
 	HandleGetJobApplications(c *gin.Context)
+	HandleDeleteJobApplication(c *gin.Context)
 	HandleLinkedInCallback(c *gin.Context)
 	HandleGetUser(c *gin.Context)
 }
@@ -155,11 +156,12 @@ type Handler interface {
 type StoreClient interface {
 	Connect() (*mongo.Client, context.Context, error)
 	Disconnect(ctx context.Context, client *mongo.Client)
-	StoreCareerProfile(careerProfile *CareerProfile) (*CareerProfile, string, error)
 	GetCareerProfileByEmail(email string) (*CareerProfile, error)
 	GetCareerProfileByID(profileId uuid.UUID) (*CareerProfile, error)
+	StoreCareerProfile(careerProfileRequest *CareerProfile) (*CareerProfile, string, error)
 	GetJobApplications(profileId uuid.UUID) (*[]JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *JobApplication) (*JobApplication, string, error)
+	DeleteJobApplication(jobApplicationId uuid.UUID) error
 }
 
 type OpenAIClient interface {

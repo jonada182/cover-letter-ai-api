@@ -8,7 +8,7 @@ tasks:
   run:
     desc: start application services
     cmds:
-      - docker compose --file=docker-compose.yml up -d --build --quiet-pull
+      - docker compose --file=docker-compose.yml up -d --build
   dev:
     desc: run dev environment
     cmds:

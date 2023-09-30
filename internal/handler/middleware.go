@@ -18,6 +18,7 @@ func Middleware() gin.HandlerFunc {
 			return
 		}
 		if c.Request.URL.Path != "/linkedin/callback" {
+			// TODO: Check that access token exists for given profile ID
 			authorizationHeader := c.GetHeader("Authorization")
 			tokenParts := strings.Split(authorizationHeader, " ")
 			if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {

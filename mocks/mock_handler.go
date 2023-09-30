@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 
 	gin "github.com/gin-gonic/gin"
-	types "github.com/jonada182/cover-letter-ai-api/types"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -36,15 +35,15 @@ func (m *MockHandlerInterface) EXPECT() *MockHandlerInterfaceMockRecorder {
 }
 
 // HandleCoverLetter mocks base method.
-func (m *MockHandlerInterface) HandleCoverLetter(arg0 *gin.Context, arg1 types.StoreClient, arg2 types.OpenAIClient) {
+func (m *MockHandlerInterface) HandleCoverLetter(arg0 *gin.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "HandleCoverLetter", arg0, arg1, arg2)
+	m.ctrl.Call(m, "HandleCoverLetter", arg0)
 }
 
 // HandleCoverLetter indicates an expected call of HandleCoverLetter.
-func (mr *MockHandlerInterfaceMockRecorder) HandleCoverLetter(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockHandlerInterfaceMockRecorder) HandleCoverLetter(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCoverLetter", reflect.TypeOf((*MockHandlerInterface)(nil).HandleCoverLetter), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCoverLetter", reflect.TypeOf((*MockHandlerInterface)(nil).HandleCoverLetter), arg0)
 }
 
 // HandleCreateCareerProfile mocks base method.
@@ -69,6 +68,18 @@ func (m *MockHandlerInterface) HandleCreateJobApplication(arg0 *gin.Context) {
 func (mr *MockHandlerInterfaceMockRecorder) HandleCreateJobApplication(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateJobApplication", reflect.TypeOf((*MockHandlerInterface)(nil).HandleCreateJobApplication), arg0)
+}
+
+// HandleDeleteJobApplication mocks base method.
+func (m *MockHandlerInterface) HandleDeleteJobApplication(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleDeleteJobApplication", arg0)
+}
+
+// HandleDeleteJobApplication indicates an expected call of HandleDeleteJobApplication.
+func (mr *MockHandlerInterfaceMockRecorder) HandleDeleteJobApplication(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleDeleteJobApplication", reflect.TypeOf((*MockHandlerInterface)(nil).HandleDeleteJobApplication), arg0)
 }
 
 // HandleGetCareerProfile mocks base method.

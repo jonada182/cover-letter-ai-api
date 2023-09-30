@@ -53,6 +53,20 @@ func (mr *MockStoreMockRecorder) Connect() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockStore)(nil).Connect))
 }
 
+// DeleteJobApplication mocks base method.
+func (m *MockStore) DeleteJobApplication(arg0 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteJobApplication", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteJobApplication indicates an expected call of DeleteJobApplication.
+func (mr *MockStoreMockRecorder) DeleteJobApplication(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteJobApplication", reflect.TypeOf((*MockStore)(nil).DeleteJobApplication), arg0)
+}
+
 // Disconnect mocks base method.
 func (m *MockStore) Disconnect(arg0 context.Context, arg1 *mongo.Client) {
 	m.ctrl.T.Helper()
