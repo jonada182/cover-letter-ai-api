@@ -78,8 +78,10 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, profileId uui
 	fmt.Printf("OpenAI prompt:\n%s\n", coverLetterPrompt)
 
 	requestBody := &types.ChatGPTRequest{
-		Model:    oa.model,
-		Messages: promptMessages,
+		Model:       oa.model,
+		Messages:    promptMessages,
+		Temperature: 0.8,
+		MaxTokens:   1024,
 	}
 	requestBodyBytes, err := json.Marshal(requestBody)
 	if err != nil {

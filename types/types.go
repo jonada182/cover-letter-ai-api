@@ -26,8 +26,10 @@ type ChatGTPRequestMessage struct {
 }
 
 type ChatGPTRequest struct {
-	Model    string                  `json:"model"`
-	Messages []ChatGTPRequestMessage `json:"messages"`
+	Model       string                  `json:"model"`
+	Messages    []ChatGTPRequestMessage `json:"messages"`
+	Temperature float32                 `json:"temperature"`
+	MaxTokens   int                     `json:"max_tokens"`
 }
 
 type ChatGPTResponseChoice struct {
