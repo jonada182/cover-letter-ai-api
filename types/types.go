@@ -120,6 +120,12 @@ type LinkedInUserData struct {
 	Email      string `json:"email"`
 }
 
+type AccessToken struct {
+	ProfileID   uuid.UUID `bson:"profile_id" json:"profile_id"`
+	AccessToken string    `bson:"access_token" json:"access_token"`
+	ExpiresAt   string    `bson:"expires_at" json:"expires_at"`
+}
+
 func MapToLinkedInUserData(data map[string]interface{}) LinkedInUserData {
 	var mappedData LinkedInUserData
 	if sub, ok := data["sub"].(string); ok {
@@ -164,6 +170,8 @@ type StoreClient interface {
 	GetJobApplications(profileId uuid.UUID) (*[]JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *JobApplication) (*JobApplication, string, error)
 	DeleteJobApplication(jobApplicationId uuid.UUID) error
+	StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error)
+	ValidateAccessToken(profileId uuid.UUID, accessToken string) (bool, error)
 }
 
 type OpenAIClient interface {

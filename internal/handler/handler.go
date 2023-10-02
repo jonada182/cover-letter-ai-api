@@ -37,10 +37,10 @@ func NewHandler(s types.StoreClient, o types.OpenAIClient) *Handler {
 	}
 }
 
-// SetupRouter sets all the API endpoints and returns a gin router
-func (h *Handler) SetupRouter() *gin.Engine {
+// setupRouter sets all the API endpoints and returns a gin router
+func (h *Handler) setupRouter() *gin.Engine {
 	router := gin.Default()
-	router.Use(Middleware())
+	router.Use(h.middleware())
 	router.GET("/", h.HandleIndex)
 	router.POST("/cover-letter", h.HandleCoverLetter)
 	router.POST("/career-profile", h.HandleCreateCareerProfile)

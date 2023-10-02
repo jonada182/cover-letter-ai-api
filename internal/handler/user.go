@@ -80,9 +80,19 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 
 // HandleGetUser returns a career profile with an email from LinkedIn using a token
 func (h *Handler) HandleGetUser(c *gin.Context) {
-	accessToken, exists := c.Get("AccessToken")
+	accessTokenParam, exists := c.Get("AccessToken")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "no authorization token provided"})
+		return
+	}
+	var accessToken string
+	if accessTokenParam != nil {
+		if str, ok := accessTokenParam.(string); ok {
+			accessToken = str
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "no authorization token provided"})
+			return
+		}
 	}
 
 	client := &http.Client{}
@@ -135,7 +145,12 @@ func (h *Handler) HandleGetUser(c *gin.Context) {
 		profileID = existingProfile.ID
 	}
 
-	// TODO: Store token for given profile ID
+	// Store access token in DB
+	_, err = h.StoreClient.StoreAccessToken(profileID, accessToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"profile_id": profileID})
 }

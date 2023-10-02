@@ -124,6 +124,21 @@ func (mr *MockStoreMockRecorder) GetJobApplications(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobApplications", reflect.TypeOf((*MockStore)(nil).GetJobApplications), arg0)
 }
 
+// StoreAccessToken mocks base method.
+func (m *MockStore) StoreAccessToken(arg0 uuid.UUID, arg1 string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StoreAccessToken", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StoreAccessToken indicates an expected call of StoreAccessToken.
+func (mr *MockStoreMockRecorder) StoreAccessToken(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAccessToken", reflect.TypeOf((*MockStore)(nil).StoreAccessToken), arg0, arg1)
+}
+
 // StoreCareerProfile mocks base method.
 func (m *MockStore) StoreCareerProfile(arg0 *types.CareerProfile) (*types.CareerProfile, string, error) {
 	m.ctrl.T.Helper()
@@ -154,4 +169,19 @@ func (m *MockStore) StoreJobApplication(arg0 *types.JobApplication) (*types.JobA
 func (mr *MockStoreMockRecorder) StoreJobApplication(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreJobApplication", reflect.TypeOf((*MockStore)(nil).StoreJobApplication), arg0)
+}
+
+// ValidateAccessToken mocks base method.
+func (m *MockStore) ValidateAccessToken(arg0 uuid.UUID, arg1 string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateAccessToken", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ValidateAccessToken indicates an expected call of ValidateAccessToken.
+func (mr *MockStoreMockRecorder) ValidateAccessToken(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateAccessToken", reflect.TypeOf((*MockStore)(nil).ValidateAccessToken), arg0, arg1)
 }
