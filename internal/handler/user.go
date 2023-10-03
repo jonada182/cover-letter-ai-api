@@ -75,7 +75,13 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	}
 	tokenResponseData := types.MapToLinkedInTokenResponse(tokenResponseBody)
 
-	c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("http://localhost:3000/?access_token=%s", tokenResponseData.AccessToken))
+	clientUrl := os.Getenv("CLIENT_URL")
+	if clientUrl == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "no client url env variable"})
+		return
+	}
+
+	c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("%s/?access_token=%s", clientUrl, tokenResponseData.AccessToken))
 }
 
 // HandleGetUser returns a career profile with an email from LinkedIn using a token
