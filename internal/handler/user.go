@@ -45,14 +45,16 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	}
 
 	client := &http.Client{}
-
+	redirectURI := fmt.Sprintf("%s/linkedin/callback", baseUrl)
+	fmt.Println("setting redirectURI: ", redirectURI)
 	// Set parameters for LinkedIn access token request
 	data := url.Values{}
 	data.Set("grant_type", "authorization_code")
 	data.Set("code", code)
 	data.Set("client_id", linkedInClientID)
 	data.Set("client_secret", linkedInClientSecret)
-	data.Set("redirect_uri", fmt.Sprintf("%s/linkedin/callback", baseUrl))
+	data.Set("redirect_uri", redirectURI)
+
 
 	// Create LinkedIn access token request
 	tokenRequest, err := http.NewRequest("POST", "https://www.linkedin.com/oauth/v2/accessToken", strings.NewReader(data.Encode()))
@@ -123,6 +125,12 @@ func (h *Handler) HandleGetUser(c *gin.Context) {
 	}
 	linkedInUserData := types.MapToLinkedInUserData(userDataResponseBody)
 
+	isValidAccount := validateLinkedInAccount(linkedInUserData.Email)
+	if !isValidAccount {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "this account is not authorized"})
+		return
+	}
+
 	var profileID uuid.UUID
 	isNewProfile := false
 	existingProfile, err := h.StoreClient.GetCareerProfileByEmail(linkedInUserData.Email)
@@ -159,4 +167,15 @@ func (h *Handler) HandleGetUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"profile_id": profileID})
+}
+
+func validateLinkedInAccount(email string) bool {
+	whiteList := os.Getenv("WHITE_LIST")
+	if whiteList == "" {
+		return true
+	}
+	if strings.Index(whiteList, email) >= 0 {
+		return true
+	}
+	return false
 }
