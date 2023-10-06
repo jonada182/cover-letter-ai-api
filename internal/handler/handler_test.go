@@ -44,17 +44,28 @@ func TestHandler(t *testing.T) {
 			router, recorder := util.SetupTestRouter()
 			util.SetupTestEnvironment(t)
 
+			profileId := uuid.New()
+			accessToken := "some_token"
+
 			// Setup mocks and expectations
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
+			mockStore.
+				EXPECT().
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				Return(true, nil).
+				Times(1)
 
 			// Setup request handler
 			handler := NewHandler(mockStore, mockOpenAI)
+			router.Use(handler.middleware())
 			router.POST(apiEndpoint, handler.HandleCoverLetter)
 			// Create a new HTTP request with no payload
 			req, err := http.NewRequest(http.MethodPost, apiEndpoint, nil)
+			req.Header.Set("UserID", profileId.String())
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 			assert.NoError(t, err)
 
 			// Serve the request
@@ -73,6 +84,7 @@ func TestHandler(t *testing.T) {
 
 			email := "test@email"
 			profileId := uuid.New()
+			accessToken := "some_token"
 			requestData := types.CoverLetterRequest{
 				ProfileID: profileId,
 				JobPosting: types.JobPosting{
@@ -96,15 +108,23 @@ func TestHandler(t *testing.T) {
 				GenerateChatGPTCoverLetter(gomock.Any(), gomock.Eq(profileId), gomock.Eq(&requestData.JobPosting), gomock.Any()).
 				Return("perfect cover letter", 200, nil).
 				Times(1)
+			mockStore.
+				EXPECT().
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				Return(true, nil).
+				Times(1)
 
 			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
+			router.Use(handler.middleware())
 			router.POST(apiEndpoint, handler.HandleCoverLetter)
 
 			// Create a new HTTP request with valid payload
 			requestBody, err := json.Marshal(requestData)
 			assert.NoError(t, err)
 			req, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewBuffer(requestBody))
+			req.Header.Set("UserID", profileId.String())
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 			assert.NoError(t, err)
 
 			// Serve the request
@@ -126,17 +146,28 @@ func TestHandler(t *testing.T) {
 			router, recorder := util.SetupTestRouter()
 			util.SetupTestEnvironment(t)
 
+			profileId := uuid.New()
+			accessToken := "some_token"
+
 			// Setup mocks and expectations
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			mockStore := mocks.NewMockStore(ctrl)
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
+			mockStore.
+				EXPECT().
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				Return(true, nil).
+				Times(1)
 
 			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
+			router.Use(handler.middleware())
 			router.POST(apiEndpoint, handler.HandleCreateCareerProfile)
 			// Create a new HTTP request with no payload
 			req, err := http.NewRequest(http.MethodPost, apiEndpoint, nil)
+			req.Header.Set("UserID", profileId.String())
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 			assert.NoError(t, err)
 
 			// Serve the request
@@ -154,6 +185,8 @@ func TestHandler(t *testing.T) {
 			util.SetupTestEnvironment(t)
 
 			email := "test@email"
+			profileId := uuid.New()
+			accessToken := "some_token"
 			requestData := types.CareerProfile{
 				FirstName:       "John",
 				LastName:        "Doe",
@@ -186,15 +219,23 @@ func TestHandler(t *testing.T) {
 				StoreCareerProfile(gomock.Eq(&requestData)).
 				Return(expectedResult, "success", nil).
 				Times(1)
+			mockStore.
+				EXPECT().
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				Return(true, nil).
+				Times(1)
 
 			// Setup mocks and expectations
 			handler := NewHandler(mockStore, mockOpenAI)
+			router.Use(handler.middleware())
 			router.POST(apiEndpoint, handler.HandleCreateCareerProfile)
 
 			// Create a new HTTP request with valid payload
 			requestBody, err := json.Marshal(requestData)
 			assert.NoError(t, err)
 			req, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewBuffer(requestBody))
+			req.Header.Set("UserID", profileId.String())
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 			assert.NoError(t, err)
 
 			// Serve the request
