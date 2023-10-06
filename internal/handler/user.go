@@ -31,6 +31,7 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "no base api url env variable"})
 		return
 	}
+	baseUrl = strings.TrimSpace(baseUrl)
 
 	state := c.Query("state")
 	if state == "" {
@@ -45,7 +46,7 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	}
 
 	client := &http.Client{}
-	redirectURI := strings.Trim(fmt.Sprintf("%s/linkedin/callback", baseUrl), " ")
+	redirectURI := fmt.Sprintf("%s/linkedin/callback", baseUrl)
 	fmt.Println("setting redirectURI: ", redirectURI)
 	// Set parameters for LinkedIn access token request
 	data := url.Values{}
