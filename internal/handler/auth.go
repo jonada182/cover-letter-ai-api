@@ -56,7 +56,6 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	data.Set("client_secret", linkedInClientSecret)
 	data.Set("redirect_uri", redirectURI)
 
-
 	// Create LinkedIn access token request
 	tokenRequest, err := http.NewRequest("POST", "https://www.linkedin.com/oauth/v2/accessToken", strings.NewReader(data.Encode()))
 	if err != nil {
@@ -87,8 +86,8 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("%s/?access_token=%s", clientUrl, tokenResponseData.AccessToken))
 }
 
-// HandleGetUser returns a career profile with an email from LinkedIn using a token
-func (h *Handler) HandleGetUser(c *gin.Context) {
+// HandleAuth returns a career profile with an email from LinkedIn using a token
+func (h *Handler) HandleAuth(c *gin.Context) {
 	accessTokenParam, exists := c.Get("AccessToken")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "no authorization token provided"})

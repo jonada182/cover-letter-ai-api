@@ -19,9 +19,10 @@ type HandlerInterface interface {
 	HandleGetCareerProfile(c *gin.Context)
 	HandleCreateJobApplication(c *gin.Context)
 	HandleGetJobApplications(c *gin.Context)
+	HandleGetJobApplicationByID(c *gin.Context)
 	HandleDeleteJobApplication(c *gin.Context)
 	HandleLinkedInCallback(c *gin.Context)
-	HandleGetUser(c *gin.Context)
+	HandleAuth(c *gin.Context)
 }
 
 type Handler struct {
@@ -44,12 +45,13 @@ func (h *Handler) SetupRouter() *gin.Engine {
 	router.GET("/", h.HandleIndex)
 	router.POST("/cover-letter", h.HandleCoverLetter)
 	router.POST("/career-profile", h.HandleCreateCareerProfile)
-	router.GET("/career-profile/:id", h.HandleGetCareerProfile)
+	router.GET("/career-profile", h.HandleGetCareerProfile)
 	router.POST("/job-applications", h.HandleCreateJobApplication)
-	router.GET("/job-applications/:profile_id", h.HandleGetJobApplications)
+	router.GET("/job-applications", h.HandleGetJobApplications)
+	router.GET("/job-applications/:id", h.HandleGetJobApplicationByID)
 	router.DELETE("/job-applications/:id", h.HandleDeleteJobApplication)
 	router.GET("/linkedin/callback", h.HandleLinkedInCallback)
-	router.GET("/user", h.HandleGetUser)
+	router.GET("/auth", h.HandleAuth)
 	return router
 }
 

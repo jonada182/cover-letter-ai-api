@@ -34,6 +34,18 @@ func (m *MockHandlerInterface) EXPECT() *MockHandlerInterfaceMockRecorder {
 	return m.recorder
 }
 
+// HandleAuth mocks base method.
+func (m *MockHandlerInterface) HandleAuth(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleAuth", arg0)
+}
+
+// HandleAuth indicates an expected call of HandleAuth.
+func (mr *MockHandlerInterfaceMockRecorder) HandleAuth(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleAuth", reflect.TypeOf((*MockHandlerInterface)(nil).HandleAuth), arg0)
+}
+
 // HandleCoverLetter mocks base method.
 func (m *MockHandlerInterface) HandleCoverLetter(arg0 *gin.Context) {
 	m.ctrl.T.Helper()
@@ -94,6 +106,18 @@ func (mr *MockHandlerInterfaceMockRecorder) HandleGetCareerProfile(arg0 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetCareerProfile", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetCareerProfile), arg0)
 }
 
+// HandleGetJobApplicationByID mocks base method.
+func (m *MockHandlerInterface) HandleGetJobApplicationByID(arg0 *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "HandleGetJobApplicationByID", arg0)
+}
+
+// HandleGetJobApplicationByID indicates an expected call of HandleGetJobApplicationByID.
+func (mr *MockHandlerInterfaceMockRecorder) HandleGetJobApplicationByID(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetJobApplicationByID", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetJobApplicationByID), arg0)
+}
+
 // HandleGetJobApplications mocks base method.
 func (m *MockHandlerInterface) HandleGetJobApplications(arg0 *gin.Context) {
 	m.ctrl.T.Helper()
@@ -104,18 +128,6 @@ func (m *MockHandlerInterface) HandleGetJobApplications(arg0 *gin.Context) {
 func (mr *MockHandlerInterfaceMockRecorder) HandleGetJobApplications(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetJobApplications", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetJobApplications), arg0)
-}
-
-// HandleGetUser mocks base method.
-func (m *MockHandlerInterface) HandleGetUser(arg0 *gin.Context) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "HandleGetUser", arg0)
-}
-
-// HandleGetUser indicates an expected call of HandleGetUser.
-func (mr *MockHandlerInterfaceMockRecorder) HandleGetUser(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetUser", reflect.TypeOf((*MockHandlerInterface)(nil).HandleGetUser), arg0)
 }
 
 // HandleIndex mocks base method.

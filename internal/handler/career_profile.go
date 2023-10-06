@@ -36,15 +36,15 @@ func (h *Handler) HandleCreateCareerProfile(c *gin.Context) {
 
 // HandleCreateCareerProfile handles a GET method to retrieve a career profile from MongoDB
 func (h *Handler) HandleGetCareerProfile(c *gin.Context) {
-	profileIdParam := c.Param("id")
-	if profileIdParam == "" {
+	profileIdParam, exists := c.Get("ProfileID")
+	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no profile_id provided in the request"})
 		return
 	}
 
-	profileId, err := uuid.Parse(profileIdParam)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	profileId, ok := profileIdParam.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid profile id"})
 		return
 	}
 

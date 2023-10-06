@@ -41,15 +41,15 @@ func (h *Handler) HandleCreateJobApplication(c *gin.Context) {
 
 // HandleGetJobApplications handles a GET method to retrieve job applications from MongoDB
 func (h *Handler) HandleGetJobApplications(c *gin.Context) {
-	profileIdParam := c.Param("profile_id")
-	if profileIdParam == "" {
+	profileIdParam, exists := c.Get("ProfileID")
+	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no profile_id provided in the request"})
 		return
 	}
 
-	profileId, err := uuid.Parse(profileIdParam)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	profileId, ok := profileIdParam.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid profile id"})
 		return
 	}
 
@@ -65,6 +65,34 @@ func (h *Handler) HandleGetJobApplications(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": &jobApplications})
+}
+
+// HandleGetJobApplicationByID handles a GET method to retrieve a job application from MongoDB
+func (h *Handler) HandleGetJobApplicationByID(c *gin.Context) {
+	jobApplicationIdParam := c.Param("id")
+	if jobApplicationIdParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no job application id provided in the request"})
+		return
+	}
+
+	jobApplicationId, err := uuid.Parse(jobApplicationIdParam)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call store method to retrieve JobApplication from MongoDB
+	jobApplication, err := h.StoreClient.GetJobApplicationByID(jobApplicationId)
+	if err != nil && strings.Contains(err.Error(), "no document") {
+		c.JSON(http.StatusNotFound, gin.H{"error": "job application not found"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": &jobApplication})
 }
 
 // HandleDeleteJobApplication handles a DELETE request to delete a job application by ID

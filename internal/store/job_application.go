@@ -44,6 +44,28 @@ func (store *StoreClient) GetJobApplications(profileId uuid.UUID) (*[]types.JobA
 	return &jobApplications, nil
 }
 
+// GetJobApplicationByID retrieves job application by ID from MongoDB
+func (store *StoreClient) GetJobApplicationByID(jobApplicationId uuid.UUID) (*types.JobApplication, error) {
+	mongoClient, ctx, err := store.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer store.Disconnect(ctx, mongoClient)
+
+	var jobApplication types.JobApplication
+	// Get the job_applications collection from the database client
+	collection := mongoClient.Database(store.dbName).Collection("job_applications")
+	// Find job applications using the career profile id
+	log.Printf("Find application for %s", jobApplicationId.String())
+	err = collection.FindOne(ctx, bson.M{"id": jobApplicationId}).Decode(&jobApplication)
+	if err != nil {
+		log.Printf("Failed to find job application:%s", err.Error())
+		return nil, err
+	}
+
+	return &jobApplication, nil
+}
+
 // StoreJobApplication upserts a JobApplication in MongoDB
 func (store *StoreClient) StoreJobApplication(jobApplicationRequest *types.JobApplication) (*types.JobApplication, string, error) {
 	mongoClient, ctx, err := store.Connect()

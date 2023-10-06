@@ -216,6 +216,7 @@ func TestHandler(t *testing.T) {
 
 		email := "test@email"
 		profileId := uuid.New()
+		accessToken := "some_token"
 		expectedResult := &types.CareerProfile{
 			ID:              profileId,
 			FirstName:       "John",
@@ -239,12 +240,19 @@ func TestHandler(t *testing.T) {
 			GetCareerProfileByID(gomock.Eq(profileId)).
 			Return(expectedResult, nil).
 			Times(1)
+		mockStore.
+			EXPECT().
+			ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+			Return(true, nil).
+			Times(1)
 
 		// Setup mocks and expectations
 		handler := NewHandler(mockStore, mockOpenAI)
-		router.GET("/career-profile/:profile_id", handler.HandleGetCareerProfile)
-
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/career-profile/%s", profileId), nil)
+		router.Use(handler.middleware())
+		router.GET("/career-profile", handler.HandleGetCareerProfile)
+		req, err := http.NewRequest(http.MethodGet, "/career-profile", nil)
+		req.Header.Set("UserID", profileId.String())
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		assert.NoError(t, err)
 
 		// Serve the request
@@ -257,4 +265,7 @@ func TestHandler(t *testing.T) {
 		expectedResponse := fmt.Sprintf("{\"data\":%s}", string(expectedData))
 		assert.Equal(t, expectedResponse, recorder.Body.String())
 	})
+
+	// TODO: Write tests for auth endpoint
+	// TODO: Write tests for job applications
 }

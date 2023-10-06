@@ -109,6 +109,21 @@ func (mr *MockStoreMockRecorder) GetCareerProfileByID(arg0 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCareerProfileByID", reflect.TypeOf((*MockStore)(nil).GetCareerProfileByID), arg0)
 }
 
+// GetJobApplicationByID mocks base method.
+func (m *MockStore) GetJobApplicationByID(arg0 uuid.UUID) (*types.JobApplication, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetJobApplicationByID", arg0)
+	ret0, _ := ret[0].(*types.JobApplication)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetJobApplicationByID indicates an expected call of GetJobApplicationByID.
+func (mr *MockStoreMockRecorder) GetJobApplicationByID(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobApplicationByID", reflect.TypeOf((*MockStore)(nil).GetJobApplicationByID), arg0)
+}
+
 // GetJobApplications mocks base method.
 func (m *MockStore) GetJobApplications(arg0 uuid.UUID) (*[]types.JobApplication, error) {
 	m.ctrl.T.Helper()

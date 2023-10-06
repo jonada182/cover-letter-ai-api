@@ -156,9 +156,10 @@ type Handler interface {
 	HandleGetCareerProfile(c *gin.Context)
 	HandleCreateJobApplication(c *gin.Context)
 	HandleGetJobApplications(c *gin.Context)
+	HandleGetJobApplicationByID(c *gin.Context)
 	HandleDeleteJobApplication(c *gin.Context)
 	HandleLinkedInCallback(c *gin.Context)
-	HandleGetUser(c *gin.Context)
+	HandleAuth(c *gin.Context)
 }
 
 type StoreClient interface {
@@ -168,6 +169,7 @@ type StoreClient interface {
 	GetCareerProfileByID(profileId uuid.UUID) (*CareerProfile, error)
 	StoreCareerProfile(careerProfileRequest *CareerProfile) (*CareerProfile, string, error)
 	GetJobApplications(profileId uuid.UUID) (*[]JobApplication, error)
+	GetJobApplicationByID(jobApplicationId uuid.UUID) (*JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *JobApplication) (*JobApplication, string, error)
 	DeleteJobApplication(jobApplicationId uuid.UUID) error
 	StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error)

@@ -39,6 +39,7 @@ type Store interface {
 	GetCareerProfileByID(profileId uuid.UUID) (*types.CareerProfile, error)
 	StoreCareerProfile(careerProfileRequest *types.CareerProfile) (*types.CareerProfile, string, error)
 	GetJobApplications(profileId uuid.UUID) (*[]types.JobApplication, error)
+	GetJobApplicationByID(jobApplicationId uuid.UUID) (*types.JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *types.JobApplication) (*types.JobApplication, string, error)
 	DeleteJobApplication(jobApplicationId uuid.UUID) error
 	StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error)
