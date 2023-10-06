@@ -45,7 +45,7 @@ func (h *Handler) HandleLinkedInCallback(c *gin.Context) {
 	}
 
 	client := &http.Client{}
-	redirectURI := fmt.Sprintf("%s/linkedin/callback", baseUrl)
+	redirectURI := strings.Trim(fmt.Sprintf("%s/linkedin/callback", baseUrl), " ")
 	fmt.Println("setting redirectURI: ", redirectURI)
 	// Set parameters for LinkedIn access token request
 	data := url.Values{}
