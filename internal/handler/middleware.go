@@ -28,7 +28,7 @@ func (h *Handler) middleware() gin.HandlerFunc {
 			}
 			accessToken := tokenParts[1]
 
-			if c.Request.URL.Path != "/user" {
+			if c.Request.URL.Path != "/auth" {
 				UserID := c.GetHeader("UserID")
 				profileId, err := uuid.Parse(UserID)
 				if err != nil {

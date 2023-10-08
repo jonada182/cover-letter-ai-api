@@ -25,7 +25,9 @@ func (store *StoreClient) GetJobApplications(profileId uuid.UUID) (*[]types.JobA
 	collection := mongoClient.Database(store.dbName).Collection("job_applications")
 	// Find job applications using the career profile id
 	log.Printf("Find applications for %s", profileId.String())
-	cur, err := collection.Find(ctx, bson.M{"profile_id": profileId})
+	options := options.Find()
+	options.SetProjection(bson.M{"events.additional_notes": 0})
+	cur, err := collection.Find(ctx, bson.M{"profile_id": profileId}, options)
 	if err != nil {
 		log.Printf("Failed to retrieve job applications:%s", err.Error())
 		return nil, err
