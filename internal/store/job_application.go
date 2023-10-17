@@ -26,7 +26,8 @@ func (store *StoreClient) GetJobApplications(profileId uuid.UUID) (*[]types.JobA
 	// Find job applications using the career profile id
 	log.Printf("Find applications for %s", profileId.String())
 	options := options.Find()
-	options.SetProjection(bson.M{"events.additional_notes": 0})
+	options.SetSort(bson.M{"updated_at": -1})
+	options.SetProjection(bson.M{"events.additional_notes": 0, "events.description": 0})
 	cur, err := collection.Find(ctx, bson.M{"profile_id": profileId}, options)
 	if err != nil {
 		log.Printf("Failed to retrieve job applications:%s", err.Error())
