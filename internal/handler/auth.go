@@ -160,7 +160,7 @@ func (h *Handler) HandleAuth(c *gin.Context) {
 	}
 
 	// Store access token in DB
-	_, err = h.StoreClient.StoreAccessToken(profileID, accessToken)
+	_, err = h.StoreClient.StoreAccessToken(profileID, accessToken, c.ClientIP())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

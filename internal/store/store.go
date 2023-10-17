@@ -42,8 +42,8 @@ type Store interface {
 	GetJobApplicationByID(jobApplicationId uuid.UUID) (*types.JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *types.JobApplication) (*types.JobApplication, string, error)
 	DeleteJobApplication(jobApplicationId uuid.UUID) error
-	StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error)
-	ValidateAccessToken(profileId uuid.UUID, accessToken string) (bool, error)
+	StoreAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (string, error)
+	ValidateAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (bool, error)
 }
 
 // NewStore returns a store client, which has methods to interact with MongoDB

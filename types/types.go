@@ -122,6 +122,7 @@ type LinkedInUserData struct {
 
 type AccessToken struct {
 	ProfileID   uuid.UUID `bson:"profile_id" json:"profile_id"`
+	IPAddress   string    `bson:"ip_address" json:"ip_address"`
 	AccessToken string    `bson:"access_token" json:"access_token"`
 	ExpiresAt   string    `bson:"expires_at" json:"expires_at"`
 }
@@ -172,8 +173,8 @@ type StoreClient interface {
 	GetJobApplicationByID(jobApplicationId uuid.UUID) (*JobApplication, error)
 	StoreJobApplication(jobApplicationRequest *JobApplication) (*JobApplication, string, error)
 	DeleteJobApplication(jobApplicationId uuid.UUID) error
-	StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error)
-	ValidateAccessToken(profileId uuid.UUID, accessToken string) (bool, error)
+	StoreAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (string, error)
+	ValidateAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (bool, error)
 }
 
 type OpenAIClient interface {

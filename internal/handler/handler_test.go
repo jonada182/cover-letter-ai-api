@@ -54,7 +54,7 @@ func TestHandler(t *testing.T) {
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockStore.
 				EXPECT().
-				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken), gomock.Any()).
 				Return(true, nil).
 				Times(1)
 
@@ -110,7 +110,7 @@ func TestHandler(t *testing.T) {
 				Times(1)
 			mockStore.
 				EXPECT().
-				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken), gomock.Any()).
 				Return(true, nil).
 				Times(1)
 
@@ -156,7 +156,7 @@ func TestHandler(t *testing.T) {
 			mockOpenAI := mocks.NewMockOpenAI(ctrl)
 			mockStore.
 				EXPECT().
-				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken), gomock.Any()).
 				Return(true, nil).
 				Times(1)
 
@@ -221,7 +221,7 @@ func TestHandler(t *testing.T) {
 				Times(1)
 			mockStore.
 				EXPECT().
-				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+				ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken), gomock.Any()).
 				Return(true, nil).
 				Times(1)
 
@@ -283,7 +283,7 @@ func TestHandler(t *testing.T) {
 			Times(1)
 		mockStore.
 			EXPECT().
-			ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken)).
+			ValidateAccessToken(gomock.Eq(profileId), gomock.Eq(accessToken), gomock.Any()).
 			Return(true, nil).
 			Times(1)
 

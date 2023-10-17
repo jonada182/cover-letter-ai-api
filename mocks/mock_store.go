@@ -140,18 +140,18 @@ func (mr *MockStoreMockRecorder) GetJobApplications(arg0 interface{}) *gomock.Ca
 }
 
 // StoreAccessToken mocks base method.
-func (m *MockStore) StoreAccessToken(arg0 uuid.UUID, arg1 string) (string, error) {
+func (m *MockStore) StoreAccessToken(arg0 uuid.UUID, arg1, arg2 string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "StoreAccessToken", arg0, arg1)
+	ret := m.ctrl.Call(m, "StoreAccessToken", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // StoreAccessToken indicates an expected call of StoreAccessToken.
-func (mr *MockStoreMockRecorder) StoreAccessToken(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) StoreAccessToken(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAccessToken", reflect.TypeOf((*MockStore)(nil).StoreAccessToken), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreAccessToken", reflect.TypeOf((*MockStore)(nil).StoreAccessToken), arg0, arg1, arg2)
 }
 
 // StoreCareerProfile mocks base method.
@@ -187,16 +187,16 @@ func (mr *MockStoreMockRecorder) StoreJobApplication(arg0 interface{}) *gomock.C
 }
 
 // ValidateAccessToken mocks base method.
-func (m *MockStore) ValidateAccessToken(arg0 uuid.UUID, arg1 string) (bool, error) {
+func (m *MockStore) ValidateAccessToken(arg0 uuid.UUID, arg1, arg2 string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateAccessToken", arg0, arg1)
+	ret := m.ctrl.Call(m, "ValidateAccessToken", arg0, arg1, arg2)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ValidateAccessToken indicates an expected call of ValidateAccessToken.
-func (mr *MockStoreMockRecorder) ValidateAccessToken(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) ValidateAccessToken(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateAccessToken", reflect.TypeOf((*MockStore)(nil).ValidateAccessToken), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateAccessToken", reflect.TypeOf((*MockStore)(nil).ValidateAccessToken), arg0, arg1, arg2)
 }

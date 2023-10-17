@@ -16,7 +16,7 @@ import (
 const TokenDuration = 7 * 24 * time.Hour
 
 // StoreAccessToken stores an access_token for a given profile_id
-func (store *StoreClient) StoreAccessToken(profileId uuid.UUID, accessToken string) (string, error) {
+func (store *StoreClient) StoreAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (string, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
 		return "", err
@@ -28,6 +28,7 @@ func (store *StoreClient) StoreAccessToken(profileId uuid.UUID, accessToken stri
 	expiresAt := time.Now().Add(TokenDuration).Format(DateTimeFormat)
 	accessTokenRow := &types.AccessToken{
 		ProfileID:   profileId,
+		IPAddress:   ipAddress,
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
 	}
@@ -36,7 +37,7 @@ func (store *StoreClient) StoreAccessToken(profileId uuid.UUID, accessToken stri
 	updateOptions := options.Update().SetUpsert(true)
 	result, err := collection.UpdateOne(
 		ctx,
-		bson.M{"profile_id": profileId},
+		bson.M{"profile_id": profileId, "ip_address": ipAddress},
 		update,
 		updateOptions,
 	)
@@ -59,7 +60,7 @@ func (store *StoreClient) StoreAccessToken(profileId uuid.UUID, accessToken stri
 }
 
 // ValidateAccessToken checks that a given access_token is valid for a profile_id
-func (store *StoreClient) ValidateAccessToken(profileId uuid.UUID, accessToken string) (bool, error) {
+func (store *StoreClient) ValidateAccessToken(profileId uuid.UUID, accessToken string, ipAddress string) (bool, error) {
 	mongoClient, ctx, err := store.Connect()
 	if err != nil {
 		return false, err
@@ -70,7 +71,7 @@ func (store *StoreClient) ValidateAccessToken(profileId uuid.UUID, accessToken s
 	// Get the access_tokens collection from the database client
 	collection := mongoClient.Database(store.dbName).Collection("access_tokens")
 	// Find access token using the given profile ID and token
-	err = collection.FindOne(ctx, bson.M{"profile_id": profileId}).Decode(&currentAccessToken)
+	err = collection.FindOne(ctx, bson.M{"profile_id": profileId, "ip_address": ipAddress}).Decode(&currentAccessToken)
 	if err != nil {
 		log.Printf("Failed to find access token:%s", err.Error())
 		return false, err

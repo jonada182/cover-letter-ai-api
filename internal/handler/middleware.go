@@ -36,7 +36,7 @@ func (h *Handler) middleware() gin.HandlerFunc {
 					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized request"})
 					return
 				}
-				validToken, err := h.StoreClient.ValidateAccessToken(profileId, accessToken)
+				validToken, err := h.StoreClient.ValidateAccessToken(profileId, accessToken, c.ClientIP())
 				if !validToken || err != nil {
 					log.Printf("error when validating access token: %s", err.Error())
 					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized request"})
