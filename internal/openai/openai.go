@@ -21,6 +21,10 @@ import (
 )
 
 var OpenAICompletionsUrl = "https://api.openai.com/v1/chat/completions"
+var (
+	GPT35 = "gpt-3.5-turbo"
+	GPT4 = "gpt-4"
+)
 
 type OpenAIClient struct {
 	apiKey string
@@ -41,7 +45,7 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 	}
 	return &OpenAIClient{
 		apiKey: apiKey,
-		model:  "gpt-3.5-turbo",
+		model:  GPT35,
 	}, nil
 }
 
@@ -80,8 +84,8 @@ func (oa *OpenAIClient) GenerateChatGPTCoverLetter(c *gin.Context, profileId uui
 	requestBody := &types.ChatGPTRequest{
 		Model:       oa.model,
 		Messages:    promptMessages,
-		Temperature: 0.8,
-		MaxTokens:   1024,
+		Temperature: 0.5,
+		MaxTokens:   512,
 	}
 	requestBodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
